@@ -25,7 +25,7 @@ public:
     // static Piece getPiece(char c);
     static const char* getImagePath(char c);
 
-    virtual Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, int position) const { return 0; };
+    virtual Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, Bitboard position) const { return 0; };
 
     virtual char getChar() const { return 0; };
 };

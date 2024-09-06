@@ -7,7 +7,7 @@ class King : public Piece
 public:
     King(PieceColor c, bool *isWhiteTurn_) : Piece(c, isWhiteTurn_) {}
 
-    Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, int position) const override
+    Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, Bitboard position) const override
     {
         Bitboard moves = 0ULL;
 
