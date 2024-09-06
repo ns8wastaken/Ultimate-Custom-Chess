@@ -11,14 +11,13 @@ public:
     {
         Bitboard moves = position;
 
-        moves |= moves - 9;
-        moves |= moves - 8;
-        moves |= moves - 7;
-        moves |= moves - 1;
-        moves |= moves + 1;
-        moves |= moves + 7;
-        moves |= moves + 8;
-        moves |= moves + 9;
+        int offsets[] = { -9, -8, -7, -1, 1, 7, 8, 9 };
+
+        for (int i = 0; i < 8; ++i) {
+            for (int j = 0; i < 7; ++j) {
+                moves |= moves - (offsets[i] * j);
+            }
+        }
 
         return moves & ((color == PieceColor::White) ? ~occupiedSquaresWhite : ~occupiedSquaresBlack);
     }

@@ -3,15 +3,15 @@
 #include "king.hpp"
 
 
-Piece Piece::getPiece(char c)
-{
-    switch (c) {
-        case 'K': return King(PieceColor::White);
-        case 'k': return King(PieceColor::Black);
-    }
+// Piece Piece::getPiece(char c)
+// {
+//     switch (c) {
+//         case 'K': return King(PieceColor::White);
+//         case 'k': return King(PieceColor::Black);
+//     }
 
-    return Piece();
-}
+//     std::__throw_runtime_error("A char does not have a piece assigned.");
+// }
 
 
 const char* Piece::getImagePath(char c)

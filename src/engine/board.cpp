@@ -18,6 +18,7 @@ Board::Board(const char* FEN)
             row_i += (int)Char - (int)'0';
         }
         else if (Char == '/') {
+            row_i = 0;
             ++col_i;
         }
         else {
