@@ -10,19 +10,19 @@
 
 int main()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ultimate Custom Chess");
 
     Engine engine;
-    Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT, engine.getBitboard());
+    Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT, engine.c_getBitboard());
 
     while (!WindowShouldClose()) {
-        // float deltaTime = GetFrameTime();
+        float deltaTime = GetFrameTime();
+
+        Vector2 mousePos = GetMousePosition();
+        engine.update(mousePos);
 
         BeginDrawing();
-
-        renderer.render();
-        // DrawTextureEx(renderer.m_textures['K'], Vector2{ 0, 0 }, 0, 100 / 32, WHITE);
-
+        renderer.render(deltaTime);
         EndDrawing();
     }
 

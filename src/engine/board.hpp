@@ -11,7 +11,7 @@ class Board
 {
 public:
     Board();
-    Board(const char *FEN);
+    Board(const char* FEN);
 
     std::unordered_map<char, Bitboard> bitboards = {
         { 'K', 0ULL },
@@ -27,9 +27,4 @@ public:
 
 private:
     bool isWhiteTurn;
-
-    struct Move
-    {
-        Bitboard bitboard;
-    };
 };

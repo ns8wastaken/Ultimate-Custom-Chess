@@ -1,13 +1,12 @@
 #include "board.hpp"
 #include "pieces/piece.cpp"
-#include <iostream>
 
 
 Board::Board()
 {}
 
 
-Board::Board(const char *FEN)
+Board::Board(const char* FEN)
 {
     int row_i = 0;
     int col_i = 0;
@@ -19,12 +18,15 @@ Board::Board(const char *FEN)
             case 0: {
                 if (std::isdigit(Char)) {
                     row_i += (int)Char - (int)'0';
-                } else if (Char == '/') {
+                }
+                else if (Char == '/') {
                     row_i = 0;
                     ++col_i;
-                } else if (Char == ' ') {
+                }
+                else if (Char == ' ') {
                     ++step;
-                } else {
+                }
+                else {
                     placePiece(bitboards[Char], col_i * 8 + row_i);
                     ++row_i;
                 }

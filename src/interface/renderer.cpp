@@ -15,6 +15,7 @@ Renderer::Renderer(int screenWidth, int screenHeight, const std::unordered_map<c
 
 void Renderer::m_loadPieceTextures()
 {
+    // Loop through all present bitboards and cache textures
     for (auto& [Char, bitboard] : m_bitboards) {
         if (Char == '\0') continue;
 
@@ -50,7 +51,7 @@ void Renderer::m_renderPieces()
 }
 
 
-void Renderer::render()
+void Renderer::render(float deltaTime)
 {
     m_renderBoardBackground();
     m_renderPieces();

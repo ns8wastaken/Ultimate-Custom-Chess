@@ -3,8 +3,13 @@
 
 
 Engine::Engine()
-    : m_board(Board("kkKKKk2/kkKK"))
+    : m_board(Board("qQQqq/kQKq"))
 {}
+
+
+void Engine::update(Vector2 mousePos)
+{
+}
 
 
 int Engine::evaluateBoard()
@@ -13,7 +18,7 @@ int Engine::evaluateBoard()
 }
 
 
-const std::unordered_map<char, Bitboard>& Engine::getBitboard()
+const std::unordered_map<char, Bitboard>& Engine::c_getBitboard()
 {
     return m_board.bitboards;
 }

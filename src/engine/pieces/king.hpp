@@ -5,7 +5,7 @@
 class King : public Piece
 {
 public:
-    King(PieceColor c, bool *isWhiteTurn_) : Piece(c, isWhiteTurn_) {}
+    King(PieceColor c, bool* isWhiteTurn_) : Piece(c, isWhiteTurn_) {}
 
     Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, Bitboard position) const override
     {

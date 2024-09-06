@@ -7,7 +7,9 @@ class Engine
 public:
     Engine();
 
-    const std::unordered_map<char, Bitboard>& getBitboard();
+    void update(Vector2 mousePos);
+
+    const std::unordered_map<char, Bitboard>& c_getBitboard();
 
 private:
     Board m_board;

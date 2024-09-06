@@ -12,9 +12,10 @@ class Renderer
 public:
     Renderer(int screenWidth, int screenHeight, const std::unordered_map<char, Bitboard>& bitboards);
 
-    void render();
+    void render(float deltaTime);
 
     std::unordered_map<char, Texture> m_textures;
+
 private:
     const std::unordered_map<char, Bitboard>& m_bitboards;
 

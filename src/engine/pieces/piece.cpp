@@ -1,7 +1,5 @@
 #include "piece.hpp"
 
-#include "king.hpp"
-
 
 const char* Piece::getImagePath(char c)
 {
