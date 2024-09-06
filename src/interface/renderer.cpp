@@ -1,8 +1,8 @@
 #include "renderer.hpp"
 
 
-Renderer::Renderer(int screenWidth, int screenHeight, const Board& board)
-    : m_board(board), m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
+Renderer::Renderer(int screenWidth, int screenHeight, const std::unordered_map<char, Bitboard>& bitboards)
+    : m_bitboards(bitboards), m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
 {
     m_loadPieceTextures();
 
@@ -15,7 +15,7 @@ Renderer::Renderer(int screenWidth, int screenHeight, const Board& board)
 
 void Renderer::m_loadPieceTextures()
 {
-    for (auto& [Char, bitboard] : m_board.bitboards) {
+    for (auto& [Char, bitboard] : m_bitboards) {
         if (Char == '\0') continue;
 
         Image image = LoadImage(Piece::getImagePath(Char));
@@ -37,7 +37,7 @@ void Renderer::m_renderBoardBackground()
 
 void Renderer::m_renderPieces()
 {
-    for (auto& [Char, bitboard] : m_board.bitboards) {
+    for (auto& [Char, bitboard] : m_bitboards) {
         if (Char == '\0') continue;
 
         for (uint64_t i = 0; i < 64; ++i) {

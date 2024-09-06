@@ -5,20 +5,20 @@
 class King : public Piece
 {
 public:
-    King(PieceColor c, bool* isWhiteTurn_) : Piece(c, isWhiteTurn_) {}
+    King(PieceColor c, bool *isWhiteTurn_) : Piece(c, isWhiteTurn_) {}
 
     Bitboard generateMoves(Bitboard occupiedSquaresWhite, Bitboard occupiedSquaresBlack, int position) const override
     {
-        Bitboard moves = position;
+        Bitboard moves = 0ULL;
 
-        moves |= moves - 9;
-        moves |= moves - 8;
-        moves |= moves - 7;
-        moves |= moves - 1;
-        moves |= moves + 1;
-        moves |= moves + 7;
-        moves |= moves + 8;
-        moves |= moves + 9;
+        moves |= position << 9;
+        moves |= position << 8;
+        moves |= position << 7;
+        moves |= position << 1;
+        moves |= position >> 1;
+        moves |= position >> 7;
+        moves |= position >> 8;
+        moves |= position >> 9;
 
         return moves & ((color == PieceColor::White) ? ~occupiedSquaresWhite : ~occupiedSquaresBlack);
     }

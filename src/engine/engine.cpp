@@ -3,7 +3,7 @@
 
 
 Engine::Engine()
-    : m_board(Board("kkKKKk"))
+    : m_board(Board("kkKKKk2/kkKK"))
 {}
 
 
@@ -13,7 +13,7 @@ int Engine::evaluateBoard()
 }
 
 
-const Board& Engine::getBoard()
+const std::unordered_map<char, Bitboard>& Engine::getBitboard()
 {
-    return m_board;
+    return m_board.bitboards;
 }

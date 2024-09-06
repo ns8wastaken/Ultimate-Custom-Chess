@@ -7,7 +7,7 @@ class Engine
 public:
     Engine();
 
-    const Board& getBoard();
+    const std::unordered_map<char, Bitboard>& getBitboard();
 
 private:
     Board m_board;

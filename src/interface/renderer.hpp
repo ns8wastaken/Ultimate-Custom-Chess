@@ -1,19 +1,22 @@
 #pragma once
 #include <raylib.h>
+#include <unordered_map>
+#include <cstdint>
 
 
-class Board;
+typedef uint64_t Bitboard;
+
 
 class Renderer
 {
 public:
-    Renderer(int screenWidth, int screenHeight, const Board& board);
+    Renderer(int screenWidth, int screenHeight, const std::unordered_map<char, Bitboard>& bitboards);
 
     void render();
 
     std::unordered_map<char, Texture> m_textures;
 private:
-    const Board& m_board;
+    const std::unordered_map<char, Bitboard>& m_bitboards;
 
     void m_loadPieceTextures();
 

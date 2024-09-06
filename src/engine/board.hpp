@@ -11,11 +11,13 @@ class Board
 {
 public:
     Board();
-    Board(const char* FEN);
+    Board(const char *FEN);
 
     std::unordered_map<char, Bitboard> bitboards = {
         { 'K', 0ULL },
-        { 'k', 0ULL }
+        { 'k', 0ULL },
+        { 'Q', 0ULL },
+        { 'q', 0ULL }
     };
 
     Bitboard generateMoves(int position, PieceColor color) const;
@@ -24,4 +26,10 @@ public:
     void removePiece(Bitboard& board, int position);
 
 private:
+    bool isWhiteTurn;
+
+    struct Move
+    {
+        Bitboard bitboard;
+    };
 };
