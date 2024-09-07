@@ -5,8 +5,8 @@
 #include "src/interface/renderer.cpp"
 
 
-constexpr int ScreenWidth = Constants::SquareWidth * 8;
-constexpr int ScreenHeight = Constants::SquareHeight * 8;
+constexpr int ScreenWidth = Constants::SquareSize * 8;
+constexpr int ScreenHeight = Constants::SquareSize * 8;
 
 
 int main()
@@ -14,7 +14,7 @@ int main()
     InitWindow(ScreenWidth, ScreenHeight, "Ultimate Custom Chess");
 
     Engine engine("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-    Renderer renderer(ScreenWidth, ScreenHeight);
+    Renderer renderer(ScreenWidth, ScreenHeight, engine.c_getCurrentMove());
 
     while (!WindowShouldClose()) {
         float deltaTime = GetFrameTime();

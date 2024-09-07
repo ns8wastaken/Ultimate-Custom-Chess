@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 
 #define PieceToInt(x) static_cast<int>(x)
@@ -7,6 +8,12 @@
 
 namespace Pieces
 {
+    struct Move
+    {
+        uint64_t from;
+        uint64_t to;
+    };
+
 
     // clang-format off
     enum class PieceType
@@ -102,8 +109,7 @@ namespace Pieces
             case PieceType::BishopBlack: return "src/interface/assets/pieces/bishop/bishop_black.png";
             case PieceType::RookBlack:   return "src/interface/assets/pieces/rook/rook_black.png";
             case PieceType::QueenBlack:  return "src/interface/assets/pieces/queen/queen_black.png";
-            case PieceType::KingBlack:
-                return "src/interface/assets/pieces/king/king_black.png";
+            case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
 
             // Custom pieces
         }

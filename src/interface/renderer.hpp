@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <array>
 
+#include "constants.hpp"
 #include "pieces.hpp"
 
 
@@ -18,7 +19,7 @@ constexpr int PieceCount = static_cast<int>(Pieces::PieceType::PieceCount);
 class Renderer
 {
 public:
-    Renderer(int screenWidth, int screenHeight);
+    Renderer(int screenWidth, int screenHeight, const Pieces::Move* engineCurrentMove);
 
     void render(float deltaTime, const char* FEN);
 
@@ -32,4 +33,6 @@ private:
 
     void m_renderBoardBackground();
     void m_renderPieces(const char* FEN);
+
+    const Pieces::Move* m_engineCurrentMove;
 };

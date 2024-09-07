@@ -42,9 +42,3 @@ Board::Board(const char* FEN)
         }
     }
 }
-
-
-std::vector<Bitboard> Board::generateMoves(Bitboard& bitboard, int index) const
-{
-    Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(index);
-}

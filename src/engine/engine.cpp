@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "board.cpp"
+#include <iostream>
 
 
 Engine::Engine(const char* FEN)
@@ -9,14 +10,59 @@ Engine::Engine(const char* FEN)
 
 void Engine::update(Vector2 mousePos)
 {
-    int clickRow_i = (int)(mousePos.x / Constants::SquareWidth);
-    int clickCol_i = (int)(mousePos.y / Constants::SquareHeight);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        int clickRow_i = (int)(mousePos.x / Constants::SquareSize);
+        int clickCol_i = (int)(mousePos.y / Constants::SquareSize);
+
+        // Out of bounds
+        if ((unsigned)clickRow_i >= 8 || (unsigned)clickCol_i >= 8) {
+            return;
+        }
+
+        uint64_t bitLocationMask = 1ULL << (clickCol_i * 8 + clickRow_i);
+
+        // Checks to see if piece was clicked
+        for (int i = 0; i < PieceCount; ++i) {
+            Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(i);
+            Bitboard bitboard = m_board.bitboards[i];
+
+            // If piece was clicked
+            if (bitboard & bitLocationMask) {
+                if (m_currentMove.from == 0ULL) {
+                    m_currentMove.from = bitLocationMask;
+                }
+                else {
+                    // TODO: Send move to board to make the move
+                    m_currentMove.to = bitLocationMask;
+                    m_currentMove.from = 0ULL;
+                    m_currentMove.to = 0ULL;
+                }
+
+                return;
+            }
+        }
+
+        // This happens if no piece was clicked (empty square)
+        m_currentMove.from = 0ULL;
+    }
 }
 
 
 int Engine::evaluateBoard()
 {
     return 0.0;
+}
+
+
+std::vector<Bitboard> Engine::generateMoves() const
+{
+    std::vector<Bitboard> moves{};
+}
+
+
+const Pieces::Move* Engine::c_getCurrentMove()
+{
+    return &m_currentMove;
 }
 
 

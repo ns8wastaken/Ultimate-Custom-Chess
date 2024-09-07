@@ -1,8 +1,8 @@
 #include "renderer.hpp"
 
 
-Renderer::Renderer(int screenWidth, int screenHeight)
-    : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
+Renderer::Renderer(int screenWidth, int screenHeight, const Pieces::Move* engineCurrentMove)
+    : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs")), m_engineCurrentMove(engineCurrentMove)
 {
     m_loadPieceTextures();
 
@@ -54,8 +54,8 @@ void Renderer::m_renderPieces(const char* FEN)
             ++col_i;
         }
         else {
-            Vector2 pos = { row_i * 100.0f, col_i * 100.0f };
-            DrawTextureEx(m_textures[PieceToInt(PieceFromChar(Char))], pos, 0, 100 / 32, WHITE);
+            Vector2 pos = { row_i * Constants::SquareSize, col_i * Constants::SquareSize };
+            DrawTextureEx(m_textures[PieceToInt(PieceFromChar(Char))], pos, 0, (float)Constants::SquareSize / 32.0f, WHITE);
             ++row_i;
         }
     }
@@ -65,5 +65,15 @@ void Renderer::m_renderPieces(const char* FEN)
 void Renderer::render(float deltaTime, const char* FEN)
 {
     m_renderBoardBackground();
+
+    int zeros = 0;
+    while (m_engineCurrentMove->from >> zeros) {
+        ++zeros;
+    }
+    --zeros;
+
+    Vector2 pos = { (zeros % 8) * Constants::SquareSize, (zeros / 8) * Constants::SquareSize };
+    DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 255, 0, 160 });
+
     m_renderPieces(FEN);
 }

@@ -25,9 +25,6 @@ public:
 
     BitboardArray bitboards;
 
-    // Move generator
-    std::vector<Bitboard> generateMoves(Bitboard& bitboard, int index) const;
-
 private:
     std::string m_FEN;
 
