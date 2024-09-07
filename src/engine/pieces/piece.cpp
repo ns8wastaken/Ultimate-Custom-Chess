@@ -8,6 +8,8 @@ const char* Piece::getImagePath(char c)
         case 'k': return "src/interface/assets/pieces/king/king_black.png";
         case 'Q': return "src/interface/assets/pieces/queen/queen_white.png";
         case 'q': return "src/interface/assets/pieces/queen/queen_black.png";
+        case 'R': return "src/interface/assets/pieces/rook/rook_white.png";
+        case 'r': return "src/interface/assets/pieces/rook/rook_black.png";
     }
 
     std::__throw_runtime_error("A loaded piece does not have a texture file path assigned.");

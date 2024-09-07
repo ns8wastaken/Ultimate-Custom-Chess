@@ -1,15 +1,18 @@
 #pragma once
+#include <raylib.h>
+
 #include "board.hpp"
 
 
 class Engine
 {
 public:
-    Engine();
+    Engine(const char* FEN);
 
     void update(Vector2 mousePos);
 
-    const std::unordered_map<char, Bitboard>& c_getBitboard();
+    const BitboardArray& c_getBitboards();
+    const char* c_getFEN();
 
 private:
     Board m_board;

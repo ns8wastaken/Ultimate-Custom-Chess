@@ -1,8 +1,8 @@
 #include "renderer.hpp"
 
 
-Renderer::Renderer(int screenWidth, int screenHeight, const std::unordered_map<char, Bitboard>& bitboards)
-    : m_bitboards(bitboards), m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
+Renderer::Renderer(int screenWidth, int screenHeight)
+    : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
 {
     m_loadPieceTextures();
 
@@ -15,15 +15,18 @@ Renderer::Renderer(int screenWidth, int screenHeight, const std::unordered_map<c
 
 void Renderer::m_loadPieceTextures()
 {
-    // Loop through all present bitboards and cache textures
-    for (auto& [Char, bitboard] : m_bitboards) {
-        if (Char == '\0') continue;
+    // Loop through all pieces and cache textures
+    for (int i = 0; i < PieceCount; ++i) {
+        // Get piece type
+        Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(i);
 
-        Image image = LoadImage(Piece::getImagePath(Char));
+        // Load texture
+        Image image = LoadImage(Pieces::getPieceSpritePath(pieceType));
         Texture texture = LoadTextureFromImage(image);
         UnloadImage(image);
 
-        m_textures[Char] = texture;
+        // Cache texture
+        m_textures[i] = texture;
     }
 }
 
@@ -36,23 +39,31 @@ void Renderer::m_renderBoardBackground()
 }
 
 
-void Renderer::m_renderPieces()
+void Renderer::m_renderPieces(const char* FEN)
 {
-    for (auto& [Char, bitboard] : m_bitboards) {
-        if (Char == '\0') continue;
+    int row_i = 0;
+    int col_i = 0;
 
-        for (uint64_t i = 0; i < 64; ++i) {
-            if (bitboard & (1ULL << i)) {
-                Vector2 pos = { (i % 8) * 100.0f, (float)(i / 8) * 100.0f };
-                DrawTextureEx(m_textures[Char], pos, 0, 100 / 32, WHITE);
-            }
+    int i = 1;
+    for (char Char = *FEN; Char != '\0'; Char = *(FEN + i), ++i) {
+        if (std::isdigit(Char)) {
+            row_i += (int)Char - (int)'0';
+        }
+        else if (Char == '/') {
+            row_i = 0;
+            ++col_i;
+        }
+        else {
+            Vector2 pos = { row_i * 100.0f, col_i * 100.0f };
+            DrawTextureEx(m_textures[PieceToInt(Pieces::getPieceTypeFromChar(Char))], pos, 0, 100 / 32, WHITE);
+            ++row_i;
         }
     }
 }
 
 
-void Renderer::render(float deltaTime)
+void Renderer::render(float deltaTime, const char* FEN)
 {
     m_renderBoardBackground();
-    m_renderPieces();
+    m_renderPieces(FEN);
 }

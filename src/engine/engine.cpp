@@ -2,8 +2,8 @@
 #include "board.cpp"
 
 
-Engine::Engine()
-    : m_board(Board("qQQqq/kQKq"))
+Engine::Engine(const char* FEN)
+    : m_board(Board(FEN))
 {}
 
 
@@ -18,7 +18,13 @@ int Engine::evaluateBoard()
 }
 
 
-const std::unordered_map<char, Bitboard>& Engine::c_getBitboard()
+const BitboardArray& Engine::c_getBitboards()
 {
     return m_board.bitboards;
+}
+
+
+const char* Engine::c_getFEN()
+{
+    return m_board.generateFEN();
 }

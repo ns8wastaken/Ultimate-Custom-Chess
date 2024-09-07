@@ -4,7 +4,7 @@ DEPS_RAYLIB = -L C:/raylib/lib -lraylib -lgdi32 -lwinmm
 all: compile finish open
 
 compile:
-	$(CPP) -I C:/raylib/include -o main.exe $(DEPS_RAYLIB)
+	$(CPP) -Isrc/includes -I C:/raylib/include -o main.exe $(DEPS_RAYLIB)
 
 finish:
 	@echo -e "\033[0;32m== Done ==\e[0m"

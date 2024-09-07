@@ -1,13 +1,10 @@
 #include "board.hpp"
-#include "pieces/piece.cpp"
-
-
-Board::Board()
-{}
 
 
 Board::Board(const char* FEN)
 {
+    bitboards.fill(0ULL);
+
     int row_i = 0;
     int col_i = 0;
 
@@ -27,7 +24,7 @@ Board::Board(const char* FEN)
                     ++step;
                 }
                 else {
-                    placePiece(bitboards[Char], col_i * 8 + row_i);
+                    bitboards[PieceToInt(Pieces::getPieceTypeFromChar(Char))] |= 1ULL << (col_i * 8 + row_i);
                     ++row_i;
                 }
                 break;
@@ -46,19 +43,52 @@ Board::Board(const char* FEN)
 }
 
 
-Bitboard Board::generateMoves(int position, PieceColor color) const
+std::vector<Bitboard> Board::generateMoves(Bitboard& bitboard, int index) const
 {
-    return 0;
+    Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(index);
 }
 
 
-void Board::placePiece(Bitboard& board, int position)
+const char* Board::generateFEN()
 {
-    board |= 1ULL << position;
-}
+    std::string m_FEN = "";
 
+    for (int col_i = 0; col_i < 8; ++col_i) {
+        // Number of empty squares counter
+        int emptyCount = 0;
 
-void Board::removePiece(Bitboard& board, int position)
-{
-    board &= ~(1ULL << position);
+        for (int row_i = 0; row_i < 8; ++row_i) {
+            int bitLocationMask = 1ULL << (col_i * 8 + row_i);
+            bool pieceFound = false;
+
+            // Loop through all bitboards
+            for (int i = 0; i < PieceCount; ++i) {
+                Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(i);
+                Bitboard bitboard = bitboards[i];
+
+                if (bitboard & bitLocationMask) {
+                    if (emptyCount)
+                        m_FEN += (char)(emptyCount + 48);
+
+                    emptyCount = 0;
+                    m_FEN += Pieces::getPieceChar(pieceType);
+
+                    pieceFound = true;
+                    break;
+                }
+            }
+
+            if (!pieceFound) {
+                ++emptyCount;
+            }
+        }
+
+        if (emptyCount)
+            m_FEN += (char)(emptyCount + 48);
+
+        if (col_i < 7)
+            m_FEN += '/';
+    }
+
+    return m_FEN.c_str();
 }

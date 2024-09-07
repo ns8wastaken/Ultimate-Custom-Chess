@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <iostream>
 
 #include "src/engine/engine.cpp"
 #include "src/interface/renderer.cpp"
@@ -12,8 +13,8 @@ int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ultimate Custom Chess");
 
-    Engine engine;
-    Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT, engine.c_getBitboard());
+    Engine engine("r3k2r/pp1n2pp/2p2q2/b2p1n2/BP1Pp3/P1N2P2/2PB2PP/R2Q1RK1");
+    Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     while (!WindowShouldClose()) {
         float deltaTime = GetFrameTime();
@@ -22,7 +23,7 @@ int main()
         engine.update(mousePos);
 
         BeginDrawing();
-        renderer.render(deltaTime);
+        renderer.render(deltaTime, engine.c_getFEN());
         EndDrawing();
     }
 

@@ -11,8 +11,6 @@ public:
     {
         Bitboard moves = 0ULL;
 
-        int offsets[] = { 1, 7, 8, 9 };
-
         int zeros = 0;
         while (position >> zeros) {
             ++zeros;
