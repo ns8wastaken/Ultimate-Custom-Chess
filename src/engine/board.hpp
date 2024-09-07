@@ -1,8 +1,8 @@
 #pragma once
-#include <unordered_map>
 #include <cstdint>
 #include <cctype>
 #include <ctype.h>
+#include <array>
 #include <vector>
 #include <string>
 
@@ -27,8 +27,6 @@ public:
 
     // Move generator
     std::vector<Bitboard> generateMoves(Bitboard& bitboard, int index) const;
-
-    const char* generateFEN();
 
 private:
     std::string m_FEN;

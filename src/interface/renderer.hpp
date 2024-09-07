@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
-#include <unordered_map>
 #include <cctype>
 #include <cstdint>
+#include <array>
 
 #include "pieces.hpp"
 
@@ -13,8 +13,6 @@ typedef uint64_t Bitboard;
   #define PIECE_COUNT
 constexpr int PieceCount = static_cast<int>(Pieces::PieceType::PieceCount);
 #endif
-
-typedef std::array<Bitboard, static_cast<size_t>(PieceCount)> BitboardArray;
 
 
 class Renderer

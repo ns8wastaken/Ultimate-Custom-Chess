@@ -55,7 +55,7 @@ void Renderer::m_renderPieces(const char* FEN)
         }
         else {
             Vector2 pos = { row_i * 100.0f, col_i * 100.0f };
-            DrawTextureEx(m_textures[PieceToInt(Pieces::getPieceTypeFromChar(Char))], pos, 0, 100 / 32, WHITE);
+            DrawTextureEx(m_textures[PieceToInt(PieceFromChar(Char))], pos, 0, 100 / 32, WHITE);
             ++row_i;
         }
     }

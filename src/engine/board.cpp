@@ -1,4 +1,5 @@
 #include "board.hpp"
+#include <bitset>
 
 
 Board::Board(const char* FEN)
@@ -24,7 +25,7 @@ Board::Board(const char* FEN)
                     ++step;
                 }
                 else {
-                    bitboards[PieceToInt(Pieces::getPieceTypeFromChar(Char))] |= 1ULL << (col_i * 8 + row_i);
+                    bitboards[PieceToInt(PieceFromChar(Char))] |= 1ULL << (col_i * 8 + row_i);
                     ++row_i;
                 }
                 break;
@@ -46,49 +47,4 @@ Board::Board(const char* FEN)
 std::vector<Bitboard> Board::generateMoves(Bitboard& bitboard, int index) const
 {
     Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(index);
-}
-
-
-const char* Board::generateFEN()
-{
-    std::string m_FEN = "";
-
-    for (int col_i = 0; col_i < 8; ++col_i) {
-        // Number of empty squares counter
-        int emptyCount = 0;
-
-        for (int row_i = 0; row_i < 8; ++row_i) {
-            int bitLocationMask = 1ULL << (col_i * 8 + row_i);
-            bool pieceFound = false;
-
-            // Loop through all bitboards
-            for (int i = 0; i < PieceCount; ++i) {
-                Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(i);
-                Bitboard bitboard = bitboards[i];
-
-                if (bitboard & bitLocationMask) {
-                    if (emptyCount)
-                        m_FEN += (char)(emptyCount + 48);
-
-                    emptyCount = 0;
-                    m_FEN += Pieces::getPieceChar(pieceType);
-
-                    pieceFound = true;
-                    break;
-                }
-            }
-
-            if (!pieceFound) {
-                ++emptyCount;
-            }
-        }
-
-        if (emptyCount)
-            m_FEN += (char)(emptyCount + 48);
-
-        if (col_i < 7)
-            m_FEN += '/';
-    }
-
-    return m_FEN.c_str();
 }

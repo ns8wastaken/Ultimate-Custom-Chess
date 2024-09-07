@@ -1,20 +1,20 @@
 #include <raylib.h>
-#include <iostream>
 
+#include "constants.hpp"
 #include "src/engine/engine.cpp"
 #include "src/interface/renderer.cpp"
 
 
-#define SCREEN_WIDTH  800
-#define SCREEN_HEIGHT 800
+constexpr int ScreenWidth = Constants::SquareWidth * 8;
+constexpr int ScreenHeight = Constants::SquareHeight * 8;
 
 
 int main()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ultimate Custom Chess");
+    InitWindow(ScreenWidth, ScreenHeight, "Ultimate Custom Chess");
 
-    Engine engine("r3k2r/pp1n2pp/2p2q2/b2p1n2/BP1Pp3/P1N2P2/2PB2PP/R2Q1RK1");
-    Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
+    Engine engine("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    Renderer renderer(ScreenWidth, ScreenHeight);
 
     while (!WindowShouldClose()) {
         float deltaTime = GetFrameTime();

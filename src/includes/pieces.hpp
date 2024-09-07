@@ -1,34 +1,16 @@
 #pragma once
-#include <array>
-#include <cstdint>
 
 
-#define PieceToInt(x) static_cast<uint16_t>(x)
+#define PieceToInt(x) static_cast<int>(x)
+#define PieceFromChar(x) Pieces::getPieceTypeFromChar(x)
 
 
 namespace Pieces
 {
 
-    // enum class PieceBase : uint16_t
-    // {
-    //     // None,
-
-    //     Pawn,
-    //     Knight,
-    //     Bishop,
-    //     Rook,
-    //     Queen,
-    //     King,
-
-    //     PieceBaseCount
-    // };
-
-
     // clang-format off
-    enum class PieceType : uint16_t
+    enum class PieceType
     {
-        // None,
-
         // White default pieces
         PawnWhite,
         KnightWhite,
@@ -45,14 +27,17 @@ namespace Pieces
         QueenBlack,
         KingBlack,
 
+        // Number of pieces
         PieceCount
     };
     // clang-format on
 
 
-    char getPieceChar(PieceType type)
+    constexpr char getPieceChar(PieceType type)
     {
         switch (type) {
+            case PieceType::PieceCount:  return '\0';
+
             // White default pieces
             case PieceType::PawnWhite:   return 'P';
             case PieceType::KnightWhite: return 'N';
@@ -68,11 +53,13 @@ namespace Pieces
             case PieceType::RookBlack:   return 'r';
             case PieceType::QueenBlack:  return 'q';
             case PieceType::KingBlack:   return 'k';
+
+            // Custom pieces
         }
     };
 
 
-    PieceType getPieceTypeFromChar(char c)
+    constexpr PieceType getPieceTypeFromChar(char c)
     {
         switch (c) {
             // White default pieces
@@ -90,6 +77,8 @@ namespace Pieces
             case 'r': return PieceType::RookBlack;
             case 'q': return PieceType::QueenBlack;
             case 'k': return PieceType::KingBlack;
+
+            // Custom pieces
         }
     };
 
@@ -97,6 +86,8 @@ namespace Pieces
     const char* getPieceSpritePath(PieceType type)
     {
         switch (type) {
+            case PieceType::PieceCount:  return "";
+
             // White default pieces
             case PieceType::PawnWhite:   return "src/interface/assets/pieces/pawn/pawn_white.png";
             case PieceType::KnightWhite: return "src/interface/assets/pieces/knight/knight_white.png";
@@ -111,7 +102,10 @@ namespace Pieces
             case PieceType::BishopBlack: return "src/interface/assets/pieces/bishop/bishop_black.png";
             case PieceType::RookBlack:   return "src/interface/assets/pieces/rook/rook_black.png";
             case PieceType::QueenBlack:  return "src/interface/assets/pieces/queen/queen_black.png";
-            case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
+            case PieceType::KingBlack:
+                return "src/interface/assets/pieces/king/king_black.png";
+
+            // Custom pieces
         }
     };
 
