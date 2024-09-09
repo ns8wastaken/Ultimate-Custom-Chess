@@ -8,17 +8,11 @@
 
 namespace Pieces
 {
-    struct Move
-    {
-        uint64_t from;
-        uint64_t to;
-    };
-
 
     // clang-format off
     enum class PieceType
     {
-        // White default pieces
+        // White pieces
         PawnWhite,
         KnightWhite,
         BishopWhite,
@@ -26,7 +20,12 @@ namespace Pieces
         QueenWhite,
         KingWhite,
 
-        // Black default pieces
+        CubistWhite,
+        SnakeWhite,
+
+
+
+        // Black pieces
         PawnBlack,
         KnightBlack,
         BishopBlack,
@@ -34,8 +33,14 @@ namespace Pieces
         QueenBlack,
         KingBlack,
 
-        // Number of pieces
-        PieceCount
+        CubistBlack,
+        SnakeBlack,
+
+
+
+        // Utils
+        PieceCount,
+        None
     };
     // clang-format on
 
@@ -43,7 +48,8 @@ namespace Pieces
     constexpr char getPieceChar(PieceType type)
     {
         switch (type) {
-            case PieceType::PieceCount:  return '\0';
+            case PieceType::None:
+            case PieceType::PieceCount: return '\0';
 
             // White default pieces
             case PieceType::PawnWhite:   return 'P';
@@ -62,7 +68,13 @@ namespace Pieces
             case PieceType::KingBlack:   return 'k';
 
             // Custom pieces
+            case PieceType::CubistWhite: return 'C';
+            case PieceType::CubistBlack: return 'c';
+            case PieceType::SnakeWhite:  return 'S';
+            case PieceType::SnakeBlack:  return 's';
         }
+
+        return '\0';
     };
 
 
@@ -86,14 +98,21 @@ namespace Pieces
             case 'k': return PieceType::KingBlack;
 
             // Custom pieces
+            case 'C': return PieceType::CubistWhite;
+            case 'c': return PieceType::CubistBlack;
+            case 'S': return PieceType::SnakeWhite;
+            case 's': return PieceType::SnakeBlack;
         }
+
+        return PieceType::None;
     };
 
 
-    const char* getPieceSpritePath(PieceType type)
+    constexpr const char* getPieceSpritePath(PieceType type)
     {
         switch (type) {
-            case PieceType::PieceCount:  return "";
+            case PieceType::None:
+            case PieceType::PieceCount: return "";
 
             // White default pieces
             case PieceType::PawnWhite:   return "src/interface/assets/pieces/pawn/pawn_white.png";
@@ -112,7 +131,13 @@ namespace Pieces
             case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
 
             // Custom pieces
+            case PieceType::CubistWhite: return "src/interface/assets/pieces/cubist/cubist_white.png";
+            case PieceType::CubistBlack: return "src/interface/assets/pieces/cubist/cubist_black.png";
+            case PieceType::SnakeWhite:  return "src/interface/assets/pieces/snake/snake_white.png";
+            case PieceType::SnakeBlack:  return "src/interface/assets/pieces/snake/snake_black.png";
         }
+
+        return "";
     };
 
 }

@@ -1,13 +1,12 @@
 #include "renderer.hpp"
 
 
-Renderer::Renderer(int screenWidth, int screenHeight, const Pieces::Move* engineCurrentMove)
-    : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs")), m_engineCurrentMove(engineCurrentMove)
+Renderer::Renderer() : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
 {
     m_loadPieceTextures();
 
     // Generate blank texture for shader
-    Image imBlank = GenImageColor(screenWidth, screenHeight, BLANK);
+    Image imBlank = GenImageColor(Constants::ScreenSize, Constants::ScreenSize, BLANK);
     m_textureBlank = LoadTextureFromImage(imBlank);
     UnloadImage(imBlank);
 }
@@ -54,7 +53,7 @@ void Renderer::m_renderPieces(const char* FEN)
             ++col_i;
         }
         else {
-            Vector2 pos = { row_i * Constants::SquareSize, col_i * Constants::SquareSize };
+            Vector2 pos = { (float)(row_i * Constants::SquareSize), (float)(col_i * Constants::SquareSize) };
             DrawTextureEx(m_textures[PieceToInt(PieceFromChar(Char))], pos, 0, (float)Constants::SquareSize / 32.0f, WHITE);
             ++row_i;
         }
@@ -62,18 +61,25 @@ void Renderer::m_renderPieces(const char* FEN)
 }
 
 
-void Renderer::render(float deltaTime, const char* FEN)
+void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves)
 {
     m_renderBoardBackground();
 
-    int zeros = 0;
-    while (m_engineCurrentMove->from >> zeros) {
-        ++zeros;
-    }
-    --zeros;
-
-    Vector2 pos = { (zeros % 8) * Constants::SquareSize, (zeros / 8) * Constants::SquareSize };
+    // Highlight selected piece
+    int zeros = __builtin_ctzll(engineSelectedPiece);
+    Vector2 pos = { (float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize) };
     DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 255, 0, 160 });
 
     m_renderPieces(FEN);
+
+    // Highlight selected piece's moves
+    Bitboard moves = engineSelectedPieceMoves;
+    zeros = __builtin_ctzll(moves);
+    while (zeros < 64) {
+        Vector2 pos = { (float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize) };
+        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 0, 0, 120 });
+
+        moves ^= (1ULL << zeros);
+        zeros = __builtin_ctzll(moves);
+    }
 }

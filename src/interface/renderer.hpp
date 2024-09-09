@@ -19,11 +19,11 @@ constexpr int PieceCount = static_cast<int>(Pieces::PieceType::PieceCount);
 class Renderer
 {
 public:
-    Renderer(int screenWidth, int screenHeight, const Pieces::Move* engineCurrentMove);
+    Renderer();
 
-    void render(float deltaTime, const char* FEN);
+    void render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves);
 
-    std::array<Texture, static_cast<size_t>(PieceCount)> m_textures;
+    std::array<Texture, (size_t)PieceCount> m_textures;
 
 private:
     void m_loadPieceTextures();
@@ -33,6 +33,4 @@ private:
 
     void m_renderBoardBackground();
     void m_renderPieces(const char* FEN);
-
-    const Pieces::Move* m_engineCurrentMove;
 };

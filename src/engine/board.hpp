@@ -1,14 +1,14 @@
 #pragma once
 #include <cstdint>
 #include <cctype>
-#include <ctype.h>
 #include <array>
-#include <vector>
-#include <string>
 
+#include "utils.hpp"
 #include "pieces.hpp"
 
+
 typedef uint64_t Bitboard;
+
 
 #ifndef PIECE_COUNT
   #define PIECE_COUNT
@@ -20,13 +20,27 @@ typedef std::array<Bitboard, static_cast<size_t>(PieceCount)> BitboardArray;
 
 class Board
 {
+private:
+    struct PrecomputedMoves
+    {
+        std::array<Bitboard, 64> knightMoves;
+        std::array<Bitboard, 64> kingMoves;
+        std::array<Bitboard, 64> cubistMoves;
+    };
+
 public:
     Board(const char* FEN);
 
+    void makeMove(Pieces::PieceType pieceType, Bitboard from, Bitboard to);
+
     BitboardArray bitboards;
+    PrecomputedMoves precomputedMoves;
+
+    bool isWhiteTurn = true;
+    Bitboard occupiedSquaresWhite = 0ULL;
+    Bitboard occupiedSquaresBlack = 0ULL;
 
 private:
-    std::string m_FEN;
-
-    bool isWhiteTurn;
+    void m_precomputeMoves();
+    void m_loadFEN(const char* FEN);
 };

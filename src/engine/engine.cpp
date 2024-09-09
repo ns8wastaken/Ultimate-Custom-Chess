@@ -1,6 +1,5 @@
 #include "engine.hpp"
 #include "board.cpp"
-#include <iostream>
 
 
 Engine::Engine(const char* FEN)
@@ -10,16 +9,49 @@ Engine::Engine(const char* FEN)
 
 void Engine::update(Vector2 mousePos)
 {
+    // Click location is of bounds
+    if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
+        return;
+    }
+
+
+    m_selectedPieceMoves = generateMove(
+        m_selectedPiecePos,
+        m_selectedPieceType,
+        m_board.bitboards[PieceToInt(Pieces::PieceType::PawnWhite)],
+        m_board.bitboards[PieceToInt(Pieces::PieceType::PawnBlack)]);
+
+
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         int clickRow_i = (int)(mousePos.x / Constants::SquareSize);
         int clickCol_i = (int)(mousePos.y / Constants::SquareSize);
 
-        // Out of bounds
-        if ((unsigned)clickRow_i >= 8 || (unsigned)clickCol_i >= 8) {
+        // Bitmask of clicked location
+        uint64_t clickLocationBitmask = 1ULL << (clickCol_i * 8 + clickRow_i);
+
+        bool pieceWasClicked = false;
+
+
+        // If clicked square was part of the moves of the selected piece
+        if (clickLocationBitmask & m_selectedPieceMoves) {
+            m_board.makeMove(m_selectedPieceType, m_selectedPiecePos, clickLocationBitmask);
+            m_requiresNewFEN = true;
+
+            m_selectedPiecePos = 0ULL;
+            m_selectedPieceType = Pieces::PieceType::None;
+            m_selectedPieceMoves = 0ULL;
             return;
         }
 
-        uint64_t bitLocationMask = 1ULL << (clickCol_i * 8 + clickRow_i);
+
+        // If clicked square was the selected piece
+        if (clickLocationBitmask & m_selectedPiecePos) {
+            m_selectedPiecePos = 0ULL;
+            m_selectedPieceType = Pieces::PieceType::None;
+            m_selectedPieceMoves = 0ULL;
+            return;
+        }
+
 
         // Checks to see if piece was clicked
         for (int i = 0; i < PieceCount; ++i) {
@@ -27,23 +59,23 @@ void Engine::update(Vector2 mousePos)
             Bitboard bitboard = m_board.bitboards[i];
 
             // If piece was clicked
-            if (bitboard & bitLocationMask) {
-                if (m_currentMove.from == 0ULL) {
-                    m_currentMove.from = bitLocationMask;
-                }
-                else {
-                    // TODO: Send move to board to make the move
-                    m_currentMove.to = bitLocationMask;
-                    m_currentMove.from = 0ULL;
-                    m_currentMove.to = 0ULL;
-                }
+            if (bitboard & clickLocationBitmask) {
+                pieceWasClicked = true;
 
-                return;
+                m_selectedPiecePos = clickLocationBitmask;
+                m_selectedPieceType = pieceType;
+
+                break;
             }
         }
 
+
         // This happens if no piece was clicked (empty square)
-        m_currentMove.from = 0ULL;
+        if (!pieceWasClicked) {
+            m_selectedPiecePos = 0ULL;
+            m_selectedPieceType = Pieces::PieceType::None;
+            m_selectedPieceMoves = 0ULL;
+        }
     }
 }
 
@@ -54,15 +86,237 @@ int Engine::evaluateBoard()
 }
 
 
-std::vector<Bitboard> Engine::generateMoves() const
+// std::vector<Bitboard> Engine::generateMoves() const
+// {}
+
+
+Bitboard Engine::generateMove(
+    Bitboard position,
+    Pieces::PieceType pieceType,
+    Bitboard& occupiedSquaresWhite,
+    Bitboard& occupiedSquaresBlack) const
 {
-    std::vector<Bitboard> moves{};
+    /*
+        Bit bitmasks
+
+            BitMaskA           BitMaskB
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+        A * * * * * * *     * * * * * * * B
+
+            BitMaskA2          BitMaskB2
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+        A A * * * * * *     * * * * * * B B
+    */
+
+    uint64_t BitMaskA = ~0x8080808080808080ULL;
+    uint64_t BitMaskA2 = ~0xc0c0c0c0c0c0c0c0ULL;
+
+    uint64_t BitMaskB = ~0x101010101010101ULL;
+    uint64_t BitMaskB2 = ~0x303030303030303ULL;
+
+    switch (pieceType) {
+        case Pieces::PieceType::None:
+        case Pieces::PieceType::PieceCount: return 0ULL;
+
+        // Default pieces
+        case Pieces::PieceType::PawnWhite: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, -8) & ~(occupiedSquaresWhite | occupiedSquaresBlack);
+            moves |= Utils::BitShift(position, -7) & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, -9) & occupiedSquaresBlack;
+
+            return moves;
+        }
+        case Pieces::PieceType::PawnBlack: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, 8) & ~(occupiedSquaresWhite | occupiedSquaresBlack);
+            moves |= Utils::BitShift(position, 7) & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, 9) & occupiedSquaresWhite;
+
+            return moves;
+        }
+
+
+        case Pieces::PieceType::KnightWhite:
+        case Pieces::PieceType::KnightBlack: {
+            Bitboard moves = m_board.precomputedMoves.knightMoves[__builtin_ctzll(position)];
+            return moves & ~((pieceType == Pieces::PieceType::KnightWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
+        }
+
+
+        case Pieces::PieceType::BishopWhite:
+        case Pieces::PieceType::BishopBlack: {
+            int zeros = __builtin_ctzll(position);
+
+            int distLeft = 7 - (zeros % 8);
+            int distRight = (zeros % 8);
+            int distUp = 7 - (zeros / 8);
+            int distDown = (zeros / 8);
+
+            int shifts[] = { 9, -9, 7, -7 };
+
+            int maxLengths[] = {
+                std::min(distLeft, distUp),    // Top left
+                std::min(distRight, distDown), // Bottom right
+                std::min(distRight, distUp),   // Top right
+                std::min(distLeft, distDown)   // Bottom left
+            };
+
+            Bitboard moves = 0ULL;
+
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 1; j <= maxLengths[i]; ++j) {
+                    Bitboard result = Utils::BitShift(position, shifts[i] * j);
+                    if (result & occupiedSquaresWhite) break;
+                    moves |= result;
+                    if (result & occupiedSquaresBlack) break;
+                }
+            }
+
+            return moves;
+        }
+
+
+        case Pieces::PieceType::RookWhite:
+        case Pieces::PieceType::RookBlack: {
+            int zeros = __builtin_ctzll(position);
+
+            int distLeft = 7 - (zeros % 8);
+            int distRight = (zeros % 8);
+            int distUp = 7 - (zeros / 8);
+            int distDown = (zeros / 8);
+
+            int shifts[] = { 1, -1, 8, -8 };
+
+            int maxLengths[] = {
+                distLeft,
+                distRight,
+                distUp,
+                distDown
+            };
+
+            Bitboard moves = 0ULL;
+
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 1; j <= maxLengths[i]; ++j) {
+                    Bitboard result = Utils::BitShift(position, shifts[i] * j);
+                    if (result & occupiedSquaresWhite) break;
+                    moves |= result;
+                    if (result & occupiedSquaresBlack) break;
+                }
+            }
+
+            return moves;
+        }
+
+
+        case Pieces::PieceType::QueenWhite:
+        case Pieces::PieceType::QueenBlack: {
+            int zeros = __builtin_ctzll(position);
+
+            int distLeft = 7 - (zeros % 8);
+            int distRight = (zeros % 8);
+            int distUp = 7 - (zeros / 8);
+            int distDown = (zeros / 8);
+
+            int shifts[] = { 1, -1, 8, -8, 9, -9, 7, -7 };
+
+            int maxLengths[] = {
+                distLeft,
+                distRight,
+                distUp,
+                distDown,
+                std::min(distLeft, distUp),    // Top left
+                std::min(distRight, distDown), // Bottom right
+                std::min(distRight, distUp),   // Top right
+                std::min(distLeft, distDown)   // Bottom left
+            };
+
+            Bitboard moves = 0ULL;
+
+            for (int i = 0; i < 8; ++i) {
+                for (int j = 1; j <= maxLengths[i]; ++j) {
+                    Bitboard result = Utils::BitShift(position, shifts[i] * j);
+                    if (result & occupiedSquaresWhite) break;
+                    moves |= result;
+                    if (result & occupiedSquaresBlack) break;
+                }
+            }
+
+            return moves;
+        }
+
+
+        case Pieces::PieceType::KingWhite:
+        case Pieces::PieceType::KingBlack: {
+            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
+            return moves & ~((pieceType == Pieces::PieceType::KingWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
+        }
+
+
+        // Custom pieces
+        case Pieces::PieceType::CubistWhite:
+        case Pieces::PieceType::CubistBlack: {
+            Bitboard moves = m_board.precomputedMoves.cubistMoves[__builtin_ctzll(position)];
+            return moves & ~((pieceType == Pieces::PieceType::CubistWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
+        }
+
+
+        case Pieces::PieceType::SnakeWhite: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, -8);
+            moves |= Utils::BitShift(position, 1) & BitMaskB;
+            moves |= Utils::BitShift(position, -1) & BitMaskA;
+
+            moves |= Utils::BitShift(position, -16) & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, 14) & BitMaskB2 & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, 18) & BitMaskA2 & occupiedSquaresBlack;
+
+            return moves & ~occupiedSquaresWhite;
+        }
+        case Pieces::PieceType::SnakeBlack: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, 8);
+            moves |= Utils::BitShift(position, 1) & BitMaskB;
+            moves |= Utils::BitShift(position, -1) & BitMaskA;
+
+            moves |= Utils::BitShift(position, 16) & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, -14) & BitMaskB2 & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, -18) & BitMaskA2 & occupiedSquaresWhite;
+
+            return moves & ~occupiedSquaresBlack;
+        }
+    }
+
+    return 0ULL;
 }
 
 
-const Pieces::Move* Engine::c_getCurrentMove()
+const Bitboard& Engine::c_getSelectedPiece()
 {
-    return &m_currentMove;
+    return m_selectedPiecePos;
+}
+
+
+const Bitboard& Engine::c_getSelectedPieceMoves()
+{
+    return m_selectedPieceMoves;
 }
 
 
