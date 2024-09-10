@@ -70,79 +70,56 @@ void Board::m_precomputeMoves()
 
     precomputedMoves.cubistMoves.fill(0ULL);
 
-    /*
-        Bit bitmasks
 
-            BitMaskA           BitMaskB
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-
-            BitMaskA2          BitMaskB2
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-    */
-
-    uint64_t BitMaskA = ~0x8080808080808080ULL;
-    uint64_t BitMaskA2 = ~0xc0c0c0c0c0c0c0c0ULL;
-
-    uint64_t BitMaskB = ~0x101010101010101ULL;
-    uint64_t BitMaskB2 = ~0x303030303030303ULL;
-
-    for (uint64_t i = 0; i < 63; ++i) {
+    for (uint64_t i = 0; i < 64; ++i) {
         // Knight
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 17) & BitMaskB;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 15) & BitMaskA;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 10) & BitMaskB2;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 6) & BitMaskA2;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -6) & BitMaskB2;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -10) & BitMaskA2;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -15) & BitMaskB;
-        precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -17) & BitMaskA;
+        {
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 17) & Utils::BitMaskB;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 15) & Utils::BitMaskA;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 10) & Utils::BitMaskB2;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, 6) & Utils::BitMaskA2;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -6) & Utils::BitMaskB2;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -10) & Utils::BitMaskA2;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -15) & Utils::BitMaskB;
+            precomputedMoves.knightMoves[i] |= Utils::BitShift(1ULL << i, -17) & Utils::BitMaskA;
+        }
 
 
         // King
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 9) & BitMaskB;
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 8);
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 7) & BitMaskA;
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 1) & BitMaskB;
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -1) & BitMaskA;
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -7) & BitMaskB;
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -8);
-        precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -9) & BitMaskA;
+        {
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 9) & Utils::BitMaskB;
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 8);
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 7) & Utils::BitMaskA;
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, 1) & Utils::BitMaskB;
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -1) & Utils::BitMaskA;
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -7) & Utils::BitMaskB;
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -8);
+            precomputedMoves.kingMoves[i] |= Utils::BitShift(1ULL << i, -9) & Utils::BitMaskA;
+        }
 
 
         // Cubist
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 18) & BitMaskB2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 10) & BitMaskB2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 2) & BitMaskB2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -6) & BitMaskB2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -14) & BitMaskB2;
+        {
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 18) & Utils::BitMaskB2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 10) & Utils::BitMaskB2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 2) & Utils::BitMaskB2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -6) & Utils::BitMaskB2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -14) & Utils::BitMaskB2;
 
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 14) & BitMaskA2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 6) & BitMaskA2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -2) & BitMaskA2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -10) & BitMaskA2;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -18) & BitMaskA2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 14) & Utils::BitMaskA2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 6) & Utils::BitMaskA2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -2) & Utils::BitMaskA2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -10) & Utils::BitMaskA2;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -18) & Utils::BitMaskA2;
 
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 17) & BitMaskB;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 15) & BitMaskA;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -15) & BitMaskB;
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -17) & BitMaskA;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 17) & Utils::BitMaskB;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 15) & Utils::BitMaskA;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -15) & Utils::BitMaskB;
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -17) & Utils::BitMaskA;
 
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 16);
-        precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -16);
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 16);
+            precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -16);
+        }
     }
 }
 

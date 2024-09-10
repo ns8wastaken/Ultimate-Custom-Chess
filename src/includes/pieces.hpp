@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 
 
 #define PieceToInt(x) static_cast<int>(x)

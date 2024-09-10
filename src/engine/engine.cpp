@@ -96,36 +96,6 @@ Bitboard Engine::generateMove(
     const Bitboard& occupiedSquaresWhite,
     const Bitboard& occupiedSquaresBlack) const
 {
-    /*
-        Bit bitmasks
-
-            BitMaskA           BitMaskB
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-        A * * * * * * *     * * * * * * * B
-
-            BitMaskA2          BitMaskB2
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-        A A * * * * * *     * * * * * * B B
-    */
-
-    uint64_t BitMaskA = ~0x8080808080808080ULL;
-    uint64_t BitMaskA2 = ~0xc0c0c0c0c0c0c0c0ULL;
-
-    uint64_t BitMaskB = ~0x101010101010101ULL;
-    uint64_t BitMaskB2 = ~0x303030303030303ULL;
-
     switch (pieceType) {
         case Pieces::PieceType::None:
         case Pieces::PieceType::PieceCount: return 0ULL;
@@ -279,12 +249,12 @@ Bitboard Engine::generateMove(
             Bitboard moves = 0ULL;
 
             moves |= Utils::BitShift(position, -8);
-            moves |= Utils::BitShift(position, 1) & BitMaskB;
-            moves |= Utils::BitShift(position, -1) & BitMaskA;
+            moves |= Utils::BitShift(position, 1) & Utils::BitMaskB;
+            moves |= Utils::BitShift(position, -1) & Utils::BitMaskA;
 
             moves |= Utils::BitShift(position, -16) & occupiedSquaresBlack;
-            moves |= Utils::BitShift(position, 14) & BitMaskB2 & occupiedSquaresBlack;
-            moves |= Utils::BitShift(position, 18) & BitMaskA2 & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, 14) & Utils::BitMaskB2 & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, 18) & Utils::BitMaskA2 & occupiedSquaresBlack;
 
             return moves & ~occupiedSquaresWhite;
         }
@@ -292,12 +262,12 @@ Bitboard Engine::generateMove(
             Bitboard moves = 0ULL;
 
             moves |= Utils::BitShift(position, 8);
-            moves |= Utils::BitShift(position, 1) & BitMaskB;
-            moves |= Utils::BitShift(position, -1) & BitMaskA;
+            moves |= Utils::BitShift(position, 1) & Utils::BitMaskB;
+            moves |= Utils::BitShift(position, -1) & Utils::BitMaskA;
 
             moves |= Utils::BitShift(position, 16) & occupiedSquaresWhite;
-            moves |= Utils::BitShift(position, -14) & BitMaskB2 & occupiedSquaresWhite;
-            moves |= Utils::BitShift(position, -18) & BitMaskA2 & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, -14) & Utils::BitMaskB2 & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, -18) & Utils::BitMaskA2 & occupiedSquaresWhite;
 
             return moves & ~occupiedSquaresBlack;
         }
