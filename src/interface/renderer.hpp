@@ -21,7 +21,7 @@ class Renderer
 public:
     Renderer();
 
-    void render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves);
+    void render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves, const Bitboard& white, const Bitboard& black);
 
     std::array<Texture, (size_t)PieceCount> m_textures;
 

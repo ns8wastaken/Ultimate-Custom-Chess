@@ -6,13 +6,60 @@ Board::Board(const char* FEN)
 {
     m_precomputeMoves();
     m_loadFEN(FEN);
+
+    for (int i = PieceToInt(Pieces::PieceType::WhitePiecesStart); i < PieceToInt(Pieces::PieceType::WhitePiecesEnd); ++i) {
+        occupiedSquaresWhite |= bitboards[i];
+    }
+
+    for (int i = PieceToInt(Pieces::PieceType::BlackPiecesStart); i < PieceToInt(Pieces::PieceType::BlackPiecesEnd); ++i) {
+
+        std::string set = std::bitset<64>(bitboards[i]).to_string();
+        for (int i = 0; i < 64; ++i) {
+            if (i % 8 == 0) std::cout << "\n";
+            std::cout << ((set[i] == '1') ? "#" : "-") << " ";
+        }
+        std::cout << "\n";
+
+        occupiedSquaresBlack |= bitboards[i];
+    }
 }
 
 
-void Board::makeMove(Pieces::PieceType pieceType, Bitboard from, Bitboard to)
+void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to)
 {
+    // Loop through all other pieces
+    for (int i = 0; i < PieceToInt(Pieces::PieceType::PieceCount); ++i) {
+        // If there is a piece in the "from" square
+        if (to & bitboards[i]) {
+            bitboards[i] &= ~to;
+
+            // Update the occupied squares
+            if (i < PieceToInt(Pieces::PieceType::WhitePiecesEnd)) {
+                occupiedSquaresWhite &= ~to;
+            }
+            else {
+                occupiedSquaresBlack &= ~to;
+            }
+
+            break;
+        }
+    }
+
+
+    // Move piece
     bitboards[PieceToInt(pieceType)] &= ~from;
     bitboards[PieceToInt(pieceType)] |= to;
+
+    if (pieceType < Pieces::PieceType::WhitePiecesEnd) {
+        occupiedSquaresWhite &= ~from;
+        occupiedSquaresWhite |= to;
+        occupiedSquaresBlack &= ~to;
+    }
+    else {
+        occupiedSquaresBlack &= ~from;
+        occupiedSquaresBlack |= to;
+        occupiedSquaresWhite &= ~to;
+    }
 }
 
 

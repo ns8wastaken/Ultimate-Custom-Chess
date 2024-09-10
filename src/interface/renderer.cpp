@@ -61,9 +61,34 @@ void Renderer::m_renderPieces(const char* FEN)
 }
 
 
-void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves)
+void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves, const Bitboard& white, const Bitboard& black)
 {
     m_renderBoardBackground();
+
+
+    Bitboard whites = white;
+    int zeroswhite = __builtin_ctzll(whites);
+    while (zeroswhite < 64) {
+        Vector2 pos = { (float)((zeroswhite % 8) * Constants::SquareSize), (float)((zeroswhite / 8) * Constants::SquareSize) };
+        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 0, 255, 120 });
+
+        whites ^= (1ULL << zeroswhite);
+        zeroswhite = __builtin_ctzll(whites);
+    }
+
+
+    Bitboard blacks = black;
+    int zerosblack = __builtin_ctzll(blacks);
+    while (zerosblack < 64) {
+        Vector2 pos = { (float)((zerosblack % 8) * Constants::SquareSize), (float)((zerosblack / 8) * Constants::SquareSize) };
+        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 0, 255, 255, 120 });
+
+        blacks ^= (1ULL << zerosblack);
+        zerosblack = __builtin_ctzll(blacks);
+    }
+
+
+
 
     // Highlight selected piece
     int zeros = __builtin_ctzll(engineSelectedPiece);

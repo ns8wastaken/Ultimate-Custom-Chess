@@ -31,7 +31,7 @@ private:
 public:
     Board(const char* FEN);
 
-    void makeMove(Pieces::PieceType pieceType, Bitboard from, Bitboard to);
+    void makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to);
 
     BitboardArray bitboards;
     PrecomputedMoves precomputedMoves;

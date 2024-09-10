@@ -9,7 +9,6 @@
 namespace Pieces
 {
 
-    // clang-format off
     enum class PieceType
     {
         // White pieces
@@ -40,9 +39,13 @@ namespace Pieces
 
         // Utils
         PieceCount,
-        None
+        None,
+
+        WhitePiecesStart = 0,
+        WhitePiecesEnd = (int)(PieceCount / 2),
+        BlackPiecesStart = WhitePiecesEnd,
+        BlackPiecesEnd = PieceCount
     };
-    // clang-format on
 
 
     constexpr char getPieceChar(PieceType type)

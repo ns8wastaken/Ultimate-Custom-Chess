@@ -7,7 +7,7 @@ Engine::Engine(const char* FEN)
 {}
 
 
-void Engine::update(Vector2 mousePos)
+void Engine::update(const Vector2& mousePos)
 {
     // Click location is of bounds
     if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
@@ -18,8 +18,8 @@ void Engine::update(Vector2 mousePos)
     m_selectedPieceMoves = generateMove(
         m_selectedPiecePos,
         m_selectedPieceType,
-        m_board.bitboards[PieceToInt(Pieces::PieceType::PawnWhite)],
-        m_board.bitboards[PieceToInt(Pieces::PieceType::PawnBlack)]);
+        m_board.occupiedSquaresWhite,
+        m_board.occupiedSquaresBlack);
 
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -91,10 +91,10 @@ int Engine::evaluateBoard()
 
 
 Bitboard Engine::generateMove(
-    Bitboard position,
-    Pieces::PieceType pieceType,
-    Bitboard& occupiedSquaresWhite,
-    Bitboard& occupiedSquaresBlack) const
+    const Bitboard& position,
+    const Pieces::PieceType& pieceType,
+    const Bitboard& occupiedSquaresWhite,
+    const Bitboard& occupiedSquaresBlack) const
 {
     /*
         Bit bitmasks
@@ -163,9 +163,9 @@ Bitboard Engine::generateMove(
             int zeros = __builtin_ctzll(position);
 
             int distLeft = 7 - (zeros % 8);
-            int distRight = (zeros % 8);
+            int distRight = zeros % 8;
             int distUp = 7 - (zeros / 8);
-            int distDown = (zeros / 8);
+            int distDown = zeros / 8;
 
             int shifts[] = { 9, -9, 7, -7 };
 
@@ -181,13 +181,14 @@ Bitboard Engine::generateMove(
             for (int i = 0; i < 4; ++i) {
                 for (int j = 1; j <= maxLengths[i]; ++j) {
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
-                    if (result & occupiedSquaresWhite) break;
                     moves |= result;
-                    if (result & occupiedSquaresBlack) break;
+
+                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                        break;
                 }
             }
 
-            return moves;
+            return moves & ~((pieceType == Pieces::PieceType::BishopWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
 
 
@@ -195,18 +196,13 @@ Bitboard Engine::generateMove(
         case Pieces::PieceType::RookBlack: {
             int zeros = __builtin_ctzll(position);
 
-            int distLeft = 7 - (zeros % 8);
-            int distRight = (zeros % 8);
-            int distUp = 7 - (zeros / 8);
-            int distDown = (zeros / 8);
-
             int shifts[] = { 1, -1, 8, -8 };
 
             int maxLengths[] = {
-                distLeft,
-                distRight,
-                distUp,
-                distDown
+                7 - (zeros % 8),
+                zeros % 8,
+                7 - (zeros / 8),
+                zeros / 8
             };
 
             Bitboard moves = 0ULL;
@@ -214,13 +210,14 @@ Bitboard Engine::generateMove(
             for (int i = 0; i < 4; ++i) {
                 for (int j = 1; j <= maxLengths[i]; ++j) {
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
-                    if (result & occupiedSquaresWhite) break;
                     moves |= result;
-                    if (result & occupiedSquaresBlack) break;
+
+                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                        break;
                 }
             }
 
-            return moves;
+            return moves & ~((pieceType == Pieces::PieceType::RookWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
 
 
@@ -229,9 +226,9 @@ Bitboard Engine::generateMove(
             int zeros = __builtin_ctzll(position);
 
             int distLeft = 7 - (zeros % 8);
-            int distRight = (zeros % 8);
+            int distRight = zeros % 8;
             int distUp = 7 - (zeros / 8);
-            int distDown = (zeros / 8);
+            int distDown = zeros / 8;
 
             int shifts[] = { 1, -1, 8, -8, 9, -9, 7, -7 };
 
@@ -251,13 +248,14 @@ Bitboard Engine::generateMove(
             for (int i = 0; i < 8; ++i) {
                 for (int j = 1; j <= maxLengths[i]; ++j) {
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
-                    if (result & occupiedSquaresWhite) break;
                     moves |= result;
-                    if (result & occupiedSquaresBlack) break;
+
+                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                        break;
                 }
             }
 
-            return moves;
+            return moves & ~((pieceType == Pieces::PieceType::QueenWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
 
 
@@ -266,6 +264,7 @@ Bitboard Engine::generateMove(
             Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
             return moves & ~((pieceType == Pieces::PieceType::KingWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
+
 
 
         // Custom pieces
@@ -371,4 +370,17 @@ const char* Engine::c_getFEN()
     }
 
     return m_FEN.c_str();
+}
+
+
+
+const Bitboard& Engine::c_getOccupiedSquaresWhite()
+{
+    return m_board.occupiedSquaresWhite;
+}
+
+
+const Bitboard& Engine::c_getOccupiedSquaresBlack()
+{
+    return m_board.occupiedSquaresBlack;
 }

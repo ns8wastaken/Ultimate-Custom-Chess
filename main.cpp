@@ -18,7 +18,7 @@ int main()
         engine.update(mousePos);
 
         BeginDrawing();
-        renderer.render(engine.c_getFEN(), engine.c_getSelectedPiece(), engine.c_getSelectedPieceMoves());
+        renderer.render(engine.c_getFEN(), engine.c_getSelectedPiece(), engine.c_getSelectedPieceMoves(), engine.c_getOccupiedSquaresWhite(), engine.c_getOccupiedSquaresBlack());
         EndDrawing();
     }
 
