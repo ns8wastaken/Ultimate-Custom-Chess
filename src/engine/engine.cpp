@@ -332,38 +332,18 @@ Bitboard Engine::generateMove(
         }
 
         case Pieces::PieceType::ObserverWhite: {
-            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
+            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)] & ~occupiedSquaresWhite;
 
-            Bitboard otherObservers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+            Bitboard kingPos = m_board.bitboards[PieceToInt(Pieces::PieceType::KingWhite)];
 
-            int zeros = __builtin_ctzll(otherObservers);
-            while (zeros < 64) {
-                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
-                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
-
-
-                otherObservers ^= (1ULL << zeros);
-                zeros = __builtin_ctzll(otherObservers);
-            }
-
-            return moves;
+            return moves | (m_board.precomputedMoves.kingMoves[__builtin_ctzll(kingPos)] & ~occupiedSquaresWhite);
         }
         case Pieces::PieceType::ObserverBlack: {
-            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
+            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)] & ~occupiedSquaresBlack;
 
-            Bitboard otherObservers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+            Bitboard kingPos = m_board.bitboards[PieceToInt(Pieces::PieceType::KingBlack)];
 
-            int zeros = __builtin_ctzll(otherObservers);
-            while (zeros < 64) {
-                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
-                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
-
-
-                otherObservers ^= (1ULL << zeros);
-                zeros = __builtin_ctzll(otherObservers);
-            }
-
-            return moves;
+            return moves | (m_board.precomputedMoves.kingMoves[__builtin_ctzll(kingPos)] & ~occupiedSquaresBlack);
         }
     }
 
