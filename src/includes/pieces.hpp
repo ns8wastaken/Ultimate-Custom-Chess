@@ -21,6 +21,7 @@ namespace Pieces
         CubistWhite,
         SnakeWhite,
         SoldierWhite,
+        ObserverWhite,
 
 
 
@@ -35,6 +36,7 @@ namespace Pieces
         CubistBlack,
         SnakeBlack,
         SoldierBlack,
+        ObserverBlack,
 
 
 
@@ -78,6 +80,8 @@ namespace Pieces
             case PieceType::SnakeBlack:   return 's';
             case PieceType::SoldierWhite: return 'F';
             case PieceType::SoldierBlack: return 'f';
+            case PieceType::ObserverWhite: return 'O';
+            case PieceType::ObserverBlack: return 'o';
         }
 
         return '\0';
@@ -110,6 +114,8 @@ namespace Pieces
             case 's': return PieceType::SnakeBlack;
             case 'F': return PieceType::SoldierWhite;
             case 'f': return PieceType::SoldierBlack;
+            case 'O': return PieceType::ObserverWhite;
+            case 'o': return PieceType::ObserverBlack;
         }
 
         return PieceType::None;
@@ -145,6 +151,8 @@ namespace Pieces
             case PieceType::SnakeBlack:   return "src/interface/assets/pieces/snake/snake_black.png";
             case PieceType::SoldierWhite: return "src/interface/assets/pieces/soldier/soldier_white.png";
             case PieceType::SoldierBlack: return "src/interface/assets/pieces/soldier/soldier_black.png";
+            case PieceType::ObserverWhite: return "src/interface/assets/pieces/observer/observer_white.png";
+            case PieceType::ObserverBlack: return "src/interface/assets/pieces/observer/observer_black.png";
         }
 
         return "";

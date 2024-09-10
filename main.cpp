@@ -11,7 +11,7 @@ int main()
 {
     InitWindow(Constants::ScreenSize, Constants::ScreenSize, "Ultimate Custom Chess");
 
-    Engine engine("rnbqkbnr/ppfpppfp/8/8/8/8/PPFPFPPP/RNBQKBNR");
+    Engine engine("rnbqkbnr/ppopppop/8/8/8/8/PPOPOPPP/RNBQKBNR");
     Renderer renderer;
 
     while (!WindowShouldClose()) {

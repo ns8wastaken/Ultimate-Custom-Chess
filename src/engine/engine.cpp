@@ -330,6 +330,41 @@ Bitboard Engine::generateMove(
 
             return moves;
         }
+
+        case Pieces::PieceType::ObserverWhite: {
+            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
+
+            Bitboard otherObservers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+
+            int zeros = __builtin_ctzll(otherObservers);
+            while (zeros < 64) {
+                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
+                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
+
+
+                otherObservers ^= (1ULL << zeros);
+                zeros = __builtin_ctzll(otherObservers);
+            }
+
+            return moves;
+        }
+        case Pieces::PieceType::ObserverBlack: {
+            Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)];
+
+            Bitboard otherObservers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+
+            int zeros = __builtin_ctzll(otherObservers);
+            while (zeros < 64) {
+                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
+                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
+
+
+                otherObservers ^= (1ULL << zeros);
+                zeros = __builtin_ctzll(otherObservers);
+            }
+
+            return moves;
+        }
     }
 
     return 0ULL;
