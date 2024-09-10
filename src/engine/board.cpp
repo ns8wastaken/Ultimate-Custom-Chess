@@ -1,5 +1,4 @@
 #include "board.hpp"
-#include <bitset>
 
 
 Board::Board(const char* FEN)
@@ -9,18 +8,18 @@ Board::Board(const char* FEN)
 
     for (int i = PieceToInt(Pieces::PieceType::WhitePiecesStart); i < PieceToInt(Pieces::PieceType::WhitePiecesEnd); ++i) {
         occupiedSquaresWhite |= bitboards[i];
+
+        // Get the initial position of white pawns
+        if (static_cast<Pieces::PieceType>(i) == Pieces::PieceType::PawnWhite)
+            initialPawnsWhite = bitboards[i];
     }
 
     for (int i = PieceToInt(Pieces::PieceType::BlackPiecesStart); i < PieceToInt(Pieces::PieceType::BlackPiecesEnd); ++i) {
-
-        std::string set = std::bitset<64>(bitboards[i]).to_string();
-        for (int i = 0; i < 64; ++i) {
-            if (i % 8 == 0) std::cout << "\n";
-            std::cout << ((set[i] == '1') ? "#" : "-") << " ";
-        }
-        std::cout << "\n";
-
         occupiedSquaresBlack |= bitboards[i];
+
+        // Get the initial position of black pawns
+        if (static_cast<Pieces::PieceType>(i) == Pieces::PieceType::PawnBlack)
+            initialPawnsBlack = bitboards[i];
     }
 }
 

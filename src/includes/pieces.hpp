@@ -20,6 +20,7 @@ namespace Pieces
 
         CubistWhite,
         SnakeWhite,
+        SoldierWhite,
 
 
 
@@ -33,6 +34,7 @@ namespace Pieces
 
         CubistBlack,
         SnakeBlack,
+        SoldierBlack,
 
 
 
@@ -70,10 +72,12 @@ namespace Pieces
             case PieceType::KingBlack:   return 'k';
 
             // Custom pieces
-            case PieceType::CubistWhite: return 'C';
-            case PieceType::CubistBlack: return 'c';
-            case PieceType::SnakeWhite:  return 'S';
-            case PieceType::SnakeBlack:  return 's';
+            case PieceType::CubistWhite:  return 'C';
+            case PieceType::CubistBlack:  return 'c';
+            case PieceType::SnakeWhite:   return 'S';
+            case PieceType::SnakeBlack:   return 's';
+            case PieceType::SoldierWhite: return 'F';
+            case PieceType::SoldierBlack: return 'f';
         }
 
         return '\0';
@@ -104,6 +108,8 @@ namespace Pieces
             case 'c': return PieceType::CubistBlack;
             case 'S': return PieceType::SnakeWhite;
             case 's': return PieceType::SnakeBlack;
+            case 'F': return PieceType::SoldierWhite;
+            case 'f': return PieceType::SoldierBlack;
         }
 
         return PieceType::None;
@@ -133,10 +139,12 @@ namespace Pieces
             case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
 
             // Custom pieces
-            case PieceType::CubistWhite: return "src/interface/assets/pieces/cubist/cubist_white.png";
-            case PieceType::CubistBlack: return "src/interface/assets/pieces/cubist/cubist_black.png";
-            case PieceType::SnakeWhite:  return "src/interface/assets/pieces/snake/snake_white.png";
-            case PieceType::SnakeBlack:  return "src/interface/assets/pieces/snake/snake_black.png";
+            case PieceType::CubistWhite:  return "src/interface/assets/pieces/cubist/cubist_white.png";
+            case PieceType::CubistBlack:  return "src/interface/assets/pieces/cubist/cubist_black.png";
+            case PieceType::SnakeWhite:   return "src/interface/assets/pieces/snake/snake_white.png";
+            case PieceType::SnakeBlack:   return "src/interface/assets/pieces/snake/snake_black.png";
+            case PieceType::SoldierWhite: return "src/interface/assets/pieces/soldier/soldier_white.png";
+            case PieceType::SoldierBlack: return "src/interface/assets/pieces/soldier/soldier_black.png";
         }
 
         return "";

@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <iostream>
+#include <bitset>
 
 #include "constants.hpp"
 #include "src/engine/engine.cpp"
@@ -10,7 +11,7 @@ int main()
 {
     InitWindow(Constants::ScreenSize, Constants::ScreenSize, "Ultimate Custom Chess");
 
-    Engine engine("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    Engine engine("rnbqkbnr/ppfpppfp/8/8/8/8/PPFPFPPP/RNBQKBNR");
     Renderer renderer;
 
     while (!WindowShouldClose()) {

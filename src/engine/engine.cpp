@@ -86,36 +86,43 @@ int Engine::evaluateBoard()
 }
 
 
-// std::vector<Bitboard> Engine::generateMoves() const
-// {}
-
-
 Bitboard Engine::generateMove(
     const Bitboard& position,
     const Pieces::PieceType& pieceType,
     const Bitboard& occupiedSquaresWhite,
     const Bitboard& occupiedSquaresBlack) const
 {
+    const Bitboard occupiedSquaresAll = (occupiedSquaresWhite | occupiedSquaresBlack);
+
     switch (pieceType) {
         case Pieces::PieceType::None:
         case Pieces::PieceType::PieceCount: return 0ULL;
+
 
         // Default pieces
         case Pieces::PieceType::PawnWhite: {
             Bitboard moves = 0ULL;
 
-            moves |= Utils::BitShift(position, -8) & ~(occupiedSquaresWhite | occupiedSquaresBlack);
+            moves |= Utils::BitShift(position, -8) & ~occupiedSquaresAll;
             moves |= Utils::BitShift(position, -7) & occupiedSquaresBlack;
             moves |= Utils::BitShift(position, -9) & occupiedSquaresBlack;
+
+            // Double push if possible
+            if ((position & m_board.initialPawnsWhite) && (Utils::BitShift(position, -8) & ~occupiedSquaresAll))
+                moves |= Utils::BitShift(position, -16) & ~occupiedSquaresAll;
 
             return moves;
         }
         case Pieces::PieceType::PawnBlack: {
             Bitboard moves = 0ULL;
 
-            moves |= Utils::BitShift(position, 8) & ~(occupiedSquaresWhite | occupiedSquaresBlack);
+            moves |= Utils::BitShift(position, 8) & ~occupiedSquaresAll;
             moves |= Utils::BitShift(position, 7) & occupiedSquaresWhite;
             moves |= Utils::BitShift(position, 9) & occupiedSquaresWhite;
+
+            // Double push if possible
+            if ((position & m_board.initialPawnsBlack) && (Utils::BitShift(position, 8) & ~occupiedSquaresAll))
+                moves |= Utils::BitShift(position, 16) & ~occupiedSquaresAll;
 
             return moves;
         }
@@ -153,7 +160,7 @@ Bitboard Engine::generateMove(
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
                     moves |= result;
 
-                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                    if (result & occupiedSquaresAll)
                         break;
                 }
             }
@@ -182,7 +189,7 @@ Bitboard Engine::generateMove(
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
                     moves |= result;
 
-                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                    if (result & occupiedSquaresAll)
                         break;
                 }
             }
@@ -220,7 +227,7 @@ Bitboard Engine::generateMove(
                     Bitboard result = Utils::BitShift(position, shifts[i] * j);
                     moves |= result;
 
-                    if (result & (occupiedSquaresWhite | occupiedSquaresBlack))
+                    if (result & occupiedSquaresAll)
                         break;
                 }
             }
@@ -270,6 +277,58 @@ Bitboard Engine::generateMove(
             moves |= Utils::BitShift(position, -18) & Utils::BitMaskA2 & occupiedSquaresWhite;
 
             return moves & ~occupiedSquaresBlack;
+        }
+
+
+        case Pieces::PieceType::SoldierWhite: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, -8) & ~occupiedSquaresAll;
+            moves |= Utils::BitShift(position, -7) & occupiedSquaresBlack;
+            moves |= Utils::BitShift(position, -9) & occupiedSquaresBlack;
+
+            // Double push if possible
+            if ((position & m_board.initialPawnsWhite) && (Utils::BitShift(position, -8) & ~occupiedSquaresAll))
+                moves |= Utils::BitShift(position, -16) & ~occupiedSquaresAll;
+
+            Bitboard otherSoldiers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+
+            int zeros = __builtin_ctzll(otherSoldiers);
+            while (zeros < 64) {
+                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
+                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
+
+
+                otherSoldiers ^= (1ULL << zeros);
+                zeros = __builtin_ctzll(otherSoldiers);
+            }
+
+            return moves;
+        }
+        case Pieces::PieceType::SoldierBlack: {
+            Bitboard moves = 0ULL;
+
+            moves |= Utils::BitShift(position, 8) & ~occupiedSquaresAll;
+            moves |= Utils::BitShift(position, 7) & occupiedSquaresWhite;
+            moves |= Utils::BitShift(position, 9) & occupiedSquaresWhite;
+
+            // Double push if possible
+            if ((position & m_board.initialPawnsBlack) && (Utils::BitShift(position, 8) & ~occupiedSquaresAll))
+                moves |= Utils::BitShift(position, 16) & ~occupiedSquaresAll;
+
+            Bitboard otherSoldiers = m_board.bitboards[PieceToInt(pieceType)] & ~position;
+
+            int zeros = __builtin_ctzll(otherSoldiers);
+            while (zeros < 64) {
+                moves |= Utils::BitShift(1ULL << zeros, 1) & Utils::BitMaskB & ~occupiedSquaresAll;
+                moves |= Utils::BitShift(1ULL << zeros, -1) & Utils::BitMaskA & ~occupiedSquaresAll;
+
+
+                otherSoldiers ^= (1ULL << zeros);
+                zeros = __builtin_ctzll(otherSoldiers);
+            }
+
+            return moves;
         }
     }
 

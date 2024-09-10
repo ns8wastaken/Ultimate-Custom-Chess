@@ -66,6 +66,9 @@ void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, cons
     m_renderBoardBackground();
 
 
+
+    // TO BE REMOVED ##########################################################################################################
+    // White occupied squares
     Bitboard whites = white;
     int zeroswhite = __builtin_ctzll(whites);
     while (zeroswhite < 64) {
@@ -76,7 +79,7 @@ void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, cons
         zeroswhite = __builtin_ctzll(whites);
     }
 
-
+    // Black occupied squares
     Bitboard blacks = black;
     int zerosblack = __builtin_ctzll(blacks);
     while (zerosblack < 64) {
@@ -86,6 +89,7 @@ void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, cons
         blacks ^= (1ULL << zerosblack);
         zerosblack = __builtin_ctzll(blacks);
     }
+    // ########################################################################################################################
 
 
 

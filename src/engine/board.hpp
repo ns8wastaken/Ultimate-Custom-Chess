@@ -40,6 +40,9 @@ public:
     Bitboard occupiedSquaresWhite = 0ULL;
     Bitboard occupiedSquaresBlack = 0ULL;
 
+    Bitboard initialPawnsWhite = 0ULL;
+    Bitboard initialPawnsBlack = 0ULL;
+
 private:
     void m_precomputeMoves();
     void m_loadFEN(const char* FEN);

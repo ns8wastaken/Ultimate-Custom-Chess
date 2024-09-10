@@ -14,7 +14,6 @@ public:
 
     void update(const Vector2& mousePos);
 
-    // std::vector<Bitboard> generateMoves() const;
     Bitboard generateMove(
         const Bitboard& position,
         const Pieces::PieceType& pieceType,

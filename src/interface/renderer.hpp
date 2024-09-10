@@ -11,7 +11,7 @@
 typedef uint64_t Bitboard;
 
 #ifndef PIECE_COUNT
-  #define PIECE_COUNT
+#define PIECE_COUNT
 constexpr int PieceCount = static_cast<int>(Pieces::PieceType::PieceCount);
 #endif
 
