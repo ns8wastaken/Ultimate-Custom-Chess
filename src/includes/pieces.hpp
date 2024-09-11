@@ -22,6 +22,7 @@ namespace Pieces
         SnakeWhite,
         SoldierWhite,
         ObserverWhite,
+        FoolWhite,
 
 
 
@@ -37,6 +38,7 @@ namespace Pieces
         SnakeBlack,
         SoldierBlack,
         ObserverBlack,
+        FoolBlack,
 
 
 
@@ -74,14 +76,16 @@ namespace Pieces
             case PieceType::KingBlack:   return 'k';
 
             // Custom pieces
-            case PieceType::CubistWhite:  return 'C';
-            case PieceType::CubistBlack:  return 'c';
-            case PieceType::SnakeWhite:   return 'S';
-            case PieceType::SnakeBlack:   return 's';
-            case PieceType::SoldierWhite: return 'F';
-            case PieceType::SoldierBlack: return 'f';
+            case PieceType::CubistWhite:   return 'C';
+            case PieceType::CubistBlack:   return 'c';
+            case PieceType::SnakeWhite:    return 'S';
+            case PieceType::SnakeBlack:    return 's';
+            case PieceType::SoldierWhite:  return 'G';
+            case PieceType::SoldierBlack:  return 'g';
             case PieceType::ObserverWhite: return 'O';
             case PieceType::ObserverBlack: return 'o';
+            case PieceType::FoolWhite:     return 'F';
+            case PieceType::FoolBlack:     return 'f';
         }
 
         return '\0';
@@ -112,10 +116,12 @@ namespace Pieces
             case 'c': return PieceType::CubistBlack;
             case 'S': return PieceType::SnakeWhite;
             case 's': return PieceType::SnakeBlack;
-            case 'F': return PieceType::SoldierWhite;
-            case 'f': return PieceType::SoldierBlack;
+            case 'G': return PieceType::SoldierWhite;
+            case 'g': return PieceType::SoldierBlack;
             case 'O': return PieceType::ObserverWhite;
             case 'o': return PieceType::ObserverBlack;
+            case 'F': return PieceType::FoolWhite;
+            case 'f': return PieceType::FoolBlack;
         }
 
         return PieceType::None;
@@ -145,14 +151,16 @@ namespace Pieces
             case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
 
             // Custom pieces
-            case PieceType::CubistWhite:  return "src/interface/assets/pieces/cubist/cubist_white.png";
-            case PieceType::CubistBlack:  return "src/interface/assets/pieces/cubist/cubist_black.png";
-            case PieceType::SnakeWhite:   return "src/interface/assets/pieces/snake/snake_white.png";
-            case PieceType::SnakeBlack:   return "src/interface/assets/pieces/snake/snake_black.png";
-            case PieceType::SoldierWhite: return "src/interface/assets/pieces/soldier/soldier_white.png";
-            case PieceType::SoldierBlack: return "src/interface/assets/pieces/soldier/soldier_black.png";
+            case PieceType::CubistWhite:   return "src/interface/assets/pieces/cubist/cubist_white.png";
+            case PieceType::CubistBlack:   return "src/interface/assets/pieces/cubist/cubist_black.png";
+            case PieceType::SnakeWhite:    return "src/interface/assets/pieces/snake/snake_white.png";
+            case PieceType::SnakeBlack:    return "src/interface/assets/pieces/snake/snake_black.png";
+            case PieceType::SoldierWhite:  return "src/interface/assets/pieces/soldier/soldier_white.png";
+            case PieceType::SoldierBlack:  return "src/interface/assets/pieces/soldier/soldier_black.png";
             case PieceType::ObserverWhite: return "src/interface/assets/pieces/observer/observer_white.png";
             case PieceType::ObserverBlack: return "src/interface/assets/pieces/observer/observer_black.png";
+            case PieceType::FoolWhite:     return "src/interface/assets/pieces/fool/fool_white.png";
+            case PieceType::FoolBlack:     return "src/interface/assets/pieces/fool/fool_black.png";
         }
 
         return "";

@@ -26,6 +26,7 @@ private:
         std::array<Bitboard, 64> knightMoves;
         std::array<Bitboard, 64> kingMoves;
         std::array<Bitboard, 64> cubistMoves;
+        std::array<Bitboard, 64> foolMoves;
     };
 
 public:

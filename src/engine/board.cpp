@@ -68,6 +68,7 @@ void Board::m_precomputeMoves()
     precomputedMoves.kingMoves.fill(0ULL);
 
     precomputedMoves.cubistMoves.fill(0ULL);
+    precomputedMoves.foolMoves.fill(0ULL);
 
 
     for (uint64_t i = 0; i < 64; ++i) {
@@ -118,6 +119,15 @@ void Board::m_precomputeMoves()
 
             precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, 16);
             precomputedMoves.cubistMoves[i] |= Utils::BitShift(1ULL << i, -16);
+        }
+
+
+        // Fool
+        {
+            precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, 8);
+            precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, 1) & Utils::BitMaskB;
+            precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, -1) & Utils::BitMaskA;
+            precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, -8);
         }
     }
 }

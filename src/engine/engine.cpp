@@ -331,6 +331,7 @@ Bitboard Engine::generateMove(
             return moves;
         }
 
+
         case Pieces::PieceType::ObserverWhite: {
             Bitboard moves = m_board.precomputedMoves.kingMoves[__builtin_ctzll(position)] & ~occupiedSquaresWhite;
 
@@ -344,6 +345,66 @@ Bitboard Engine::generateMove(
             Bitboard kingPos = m_board.bitboards[PieceToInt(Pieces::PieceType::KingBlack)];
 
             return moves | (m_board.precomputedMoves.kingMoves[__builtin_ctzll(kingPos)] & ~occupiedSquaresBlack);
+        }
+
+        case Pieces::PieceType::FoolWhite:
+        case Pieces::PieceType::FoolBlack: {
+            Bitboard moves = m_board.precomputedMoves.foolMoves[__builtin_ctzll(position)];
+
+            Bitboard upPos = Utils::BitShift(position, -8);
+            Bitboard downPos = Utils::BitShift(position, 8);
+            Bitboard leftPos = Utils::BitShift(position, 1);
+            Bitboard rightPos = Utils::BitShift(position, -1);
+
+            Bitboard occupiedSquaresAllExceptSelf = occupiedSquaresAll & ~position;
+
+            Bitboard neighbors = 0ULL;
+
+            if (moves & upPos) {
+                neighbors |= Utils::BitShift(upPos, 1);
+                neighbors |= Utils::BitShift(upPos, -1);
+                neighbors |= Utils::BitShift(upPos, 8);
+                neighbors |= Utils::BitShift(upPos, -8);
+
+                if (neighbors & occupiedSquaresAllExceptSelf)
+                    moves |= m_board.precomputedMoves.foolMoves[__builtin_ctzll(upPos)];
+            }
+            neighbors = 0ULL;
+
+            if (moves & downPos) {
+                neighbors |= Utils::BitShift(downPos, 1);
+                neighbors |= Utils::BitShift(downPos, -1);
+                neighbors |= Utils::BitShift(downPos, 8);
+                neighbors |= Utils::BitShift(downPos, -8);
+
+                if (neighbors & occupiedSquaresAllExceptSelf)
+                    moves |= m_board.precomputedMoves.foolMoves[__builtin_ctzll(downPos)];
+            }
+            neighbors = 0ULL;
+
+            if (moves & leftPos) {
+                neighbors |= Utils::BitShift(leftPos, 1);
+                neighbors |= Utils::BitShift(leftPos, -1);
+                neighbors |= Utils::BitShift(leftPos, 8);
+                neighbors |= Utils::BitShift(leftPos, -8);
+
+                if (neighbors & occupiedSquaresAllExceptSelf)
+                    moves |= m_board.precomputedMoves.foolMoves[__builtin_ctzll(leftPos)];
+            }
+            neighbors = 0ULL;
+
+            if (moves & rightPos) {
+                neighbors |= Utils::BitShift(rightPos, 1);
+                neighbors |= Utils::BitShift(rightPos, -1);
+                neighbors |= Utils::BitShift(rightPos, 8);
+                neighbors |= Utils::BitShift(rightPos, -8);
+
+                if (neighbors & occupiedSquaresAllExceptSelf)
+                    moves |= m_board.precomputedMoves.foolMoves[__builtin_ctzll(rightPos)];
+            }
+
+
+            return moves & ~((pieceType == Pieces::PieceType::FoolWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
     }
 

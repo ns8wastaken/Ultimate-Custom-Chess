@@ -1,4 +1,4 @@
-#include "renderer.hpp"
+#include "board_renderer.hpp"
 
 
 Renderer::Renderer() : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
