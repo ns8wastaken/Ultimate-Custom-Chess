@@ -28,22 +28,9 @@ Board::Board(const char* FEN)
 
 void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to)
 {
-    Pieces::PieceType TYPE_OF_PIECE = pieceLookup[__builtin_ctzll(from)];
-    std::string set = std::bitset<64>(from).to_string();
-    for (int i = 0; i < 64; ++i) {
-        if (i % 8 == 0) std::cout << "\n";
-        std::cout << ((set[i] == '1') ? "1" : "0") << " ";
-    }
-    std::cout << "\n\n";
-
-    set = std::bitset<64>(to).to_string();
-    for (int i = 0; i < 64; ++i) {
-        if (i % 8 == 0) std::cout << "\n";
-        std::cout << ((set[i] == '1') ? "1" : "0") << " ";
-    }
-    std::cout << "\n" << Pieces::getPieceChar(TYPE_OF_PIECE);
-    std::cout << "\n\n------------------------------\n";
-
+    isWhiteTurn = !isWhiteTurn;
+    depthPly += 1;
+    depthMove += !(depthPly % 2);
 
 
     // If en passant is active
@@ -51,8 +38,8 @@ void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, c
         Pieces::PieceType enPassantPieceType = pieceLookup[__builtin_ctzll(enPassant.to)];
 
         // Check if en passant square was attacked
-        if ((TYPE_OF_PIECE == Pieces::PieceType::PawnWhite ||
-             TYPE_OF_PIECE == Pieces::PieceType::PawnBlack) &&
+        if ((pieceType == Pieces::PieceType::PawnWhite ||
+             pieceType == Pieces::PieceType::PawnBlack) &&
             to == enPassant.from) {
             bitboards[PieceToInt(enPassantPieceType)] &= ~enPassant.to;
             occupiedSquaresWhite &= ~enPassant.to;
@@ -69,10 +56,6 @@ void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, c
         enPassant.from = 0ULL;
         enPassant.to = 0ULL;
     }
-
-    isWhiteTurn = !isWhiteTurn;
-    depthPly += 1;
-    depthMove += !(depthPly % 2);
 
 
     // If the "to" square has a piece on it
@@ -92,20 +75,20 @@ void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, c
 
 
     // Move piece
-    bitboards[PieceToInt(TYPE_OF_PIECE)] &= ~from;
-    bitboards[PieceToInt(TYPE_OF_PIECE)] |= to;
+    bitboards[PieceToInt(pieceType)] &= ~from;
+    bitboards[PieceToInt(pieceType)] |= to;
 
     pieceLookup[__builtin_ctzll(from)] = Pieces::PieceType::None;
-    pieceLookup[__builtin_ctzll(to)] = TYPE_OF_PIECE;
+    pieceLookup[__builtin_ctzll(to)] = pieceType;
 
 
     // Set en passant square if a pawn was moved 2 squares
-    if ((TYPE_OF_PIECE == Pieces::PieceType::PawnWhite) && (to == (from >> 16))) [[unlikely]] {
+    if ((pieceType == Pieces::PieceType::PawnWhite) && (to == (from >> 16))) [[unlikely]] {
         enPassant.from = from >> 8;
         enPassant.to = to;
         occupiedSquaresWhite |= enPassant.from;
     }
-    else if ((TYPE_OF_PIECE == Pieces::PieceType::PawnBlack) && (to == (from << 16))) [[unlikely]] {
+    else if ((pieceType == Pieces::PieceType::PawnBlack) && (to == (from << 16))) [[unlikely]] {
         enPassant.from = from << 8;
         enPassant.to = to;
         occupiedSquaresBlack |= enPassant.from;
@@ -113,7 +96,7 @@ void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, c
 
 
     // Update occupied squares
-    if (TYPE_OF_PIECE < Pieces::PieceType::WhitePiecesEnd) {
+    if (pieceType < Pieces::PieceType::WhitePiecesEnd) {
         occupiedSquaresWhite &= ~from;
         occupiedSquaresWhite |= to;
         occupiedSquaresBlack &= ~to;

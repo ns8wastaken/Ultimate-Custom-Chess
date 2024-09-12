@@ -17,7 +17,7 @@ public:
 
     const char* c_getFEN();
     const Bitboard& c_getSelectedPiece();
-    const Bitboard c_getSelectedPieceMoves();
+    const Bitboard& c_getSelectedPieceMoves();
 
     const Bitboard& c_getOccupiedSquaresWhite();
     const Bitboard& c_getOccupiedSquaresBlack();

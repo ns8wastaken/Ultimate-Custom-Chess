@@ -13,6 +13,7 @@ void Engine::update(const Vector2& mousePos)
         std::vector<Pieces::Move> moves = m_generateBotMoves();
         Pieces::Move move = moves[0];
         m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to);
+        m_requiresNewFEN = true;
         return;
     }
 
@@ -422,18 +423,14 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
 {
     std::vector<Pieces::Move> botMoves;
 
-    // int size = 0;
-    // for (Pieces::PieceType pieceType : m_board.pieceLookup)
-    //     if (pieceType < Pieces::PieceType::WhitePiecesEnd)
-    //         ++size;
-    // printf("pieceLookup size: %i\n", size);
-
-
     for (size_t i = 0; i < m_board.pieceLookup.size(); ++i) {
         Pieces::PieceType pieceType = m_board.pieceLookup[i];
 
         if ((pieceType == Pieces::PieceType::None) ||
-            (pieceType < Pieces::PieceType::WhitePiecesEnd)) continue;
+            (pieceType < Pieces::PieceType::WhitePiecesEnd)) {
+            printf("yayy1 %c\n", Pieces::getPieceChar(pieceType));
+            continue;
+        }
 
         Bitboard position = 1ULL << i;
 
@@ -449,6 +446,8 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
         }
     }
 
+    std::cout << botMoves.size() << "-----------------------------------\n\n";
+
     return botMoves;
 }
 
@@ -459,16 +458,8 @@ const Bitboard& Engine::c_getSelectedPiece()
 }
 
 
-const Bitboard Engine::c_getSelectedPieceMoves()
+const Bitboard& Engine::c_getSelectedPieceMoves()
 {
-    // Bitboard moves = 0ULL;
-
-    // for (Pieces::Move& move : m_generateBotMoves()) {
-    //     if (m_board.pieceLookup[__builtin_ctzll(move.from)] >= Pieces::PieceType::WhitePiecesEnd)
-    //         moves |= move.to;
-    // }
-    // return moves;
-
     return m_selectedPieceMoves;
 }
 
