@@ -14,25 +14,28 @@ public:
 
     void update(const Vector2& mousePos);
 
-    Bitboard generateMove(
-        const Bitboard& position,
-        const Pieces::PieceType& pieceType,
-        const Bitboard& occupiedSquaresWhite,
-        const Bitboard& occupiedSquaresBlack) const;
 
     const char* c_getFEN();
     const Bitboard& c_getSelectedPiece();
-    const Bitboard& c_getSelectedPieceMoves();
+    const Bitboard c_getSelectedPieceMoves();
 
     const Bitboard& c_getOccupiedSquaresWhite();
     const Bitboard& c_getOccupiedSquaresBlack();
 
 private:
     Board m_board;
+    bool m_isVsBot = true;
 
     Bitboard m_selectedPiecePos = 0ULL;
     Pieces::PieceType m_selectedPieceType = Pieces::PieceType::None;
     Bitboard m_selectedPieceMoves = 0ULL;
+
+    Bitboard m_generateMove(
+        const Bitboard& position,
+        const Pieces::PieceType& pieceType,
+        const Bitboard& occupiedSquaresWhite,
+        const Bitboard& occupiedSquaresBlack) const;
+    std::vector<Pieces::Move> m_generateBotMoves() const;
 
     std::string m_FEN = "";
     bool m_requiresNewFEN;

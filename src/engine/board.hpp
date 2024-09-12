@@ -11,7 +11,7 @@ typedef uint64_t Bitboard;
 
 
 #ifndef PIECE_COUNT
-  #define PIECE_COUNT
+#define PIECE_COUNT
 constexpr int PieceCount = static_cast<int>(Pieces::PieceType::PieceCount);
 #endif
 
@@ -37,6 +37,13 @@ public:
     BitboardArray bitboards;
     PrecomputedMoves precomputedMoves;
 
+    // Number of plies (half moves) played
+    int depthPly = 0;
+    // Number of moves played
+    int depthMove = 0;
+
+    std::array<Pieces::PieceType, 64> pieceLookup;
+
     bool isWhiteTurn = true;
     Bitboard occupiedSquaresWhite = 0ULL;
     Bitboard occupiedSquaresBlack = 0ULL;
@@ -45,6 +52,10 @@ public:
     Bitboard initialPawnsBlack = 0ULL;
 
 private:
+    // From: en passant hitbox
+    // To: current position
+    Pieces::Move enPassant;
+
     void m_precomputeMoves();
     void m_loadFEN(const char* FEN);
 };

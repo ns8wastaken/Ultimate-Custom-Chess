@@ -53,6 +53,59 @@ namespace Pieces
     };
 
 
+    struct Move
+    {
+        uint64_t from = 0ULL;
+        uint64_t to = 0ULL;
+    };
+
+
+    constexpr int getPieceValue(PieceType type)
+    {
+        switch (type) {
+            case PieceType::None:
+            case PieceType::PieceCount: return 0;
+
+            // Default pieces
+            case PieceType::PawnWhite:
+            case PieceType::PawnBlack:   return 100;
+
+            case PieceType::KnightWhite:
+            case PieceType::KnightBlack: return 300;
+
+            case PieceType::BishopWhite:
+            case PieceType::BishopBlack: return 300;
+
+            case PieceType::RookWhite:
+            case PieceType::RookBlack:   return 500;
+
+            case PieceType::QueenWhite:
+            case PieceType::QueenBlack:  return 900;
+
+            case PieceType::KingWhite:
+            case PieceType::KingBlack:   return 314159265;
+
+
+
+            // Custom pieces
+            case PieceType::CubistWhite:
+            case PieceType::CubistBlack:   return 650;
+
+            case PieceType::SnakeWhite:
+            case PieceType::SnakeBlack:    return 200;
+
+            case PieceType::SoldierWhite:
+            case PieceType::SoldierBlack:  return 200;
+
+            case PieceType::ObserverWhite:
+            case PieceType::ObserverBlack: return 350;
+
+            case PieceType::FoolWhite:
+            case PieceType::FoolBlack:     return 250;
+        }
+    }
+
+
     constexpr char getPieceChar(PieceType type)
     {
         switch (type) {
@@ -75,15 +128,21 @@ namespace Pieces
             case PieceType::QueenBlack:  return 'q';
             case PieceType::KingBlack:   return 'k';
 
+
+
             // Custom pieces
             case PieceType::CubistWhite:   return 'C';
             case PieceType::CubistBlack:   return 'c';
+
             case PieceType::SnakeWhite:    return 'S';
             case PieceType::SnakeBlack:    return 's';
+
             case PieceType::SoldierWhite:  return 'G';
             case PieceType::SoldierBlack:  return 'g';
+
             case PieceType::ObserverWhite: return 'O';
             case PieceType::ObserverBlack: return 'o';
+
             case PieceType::FoolWhite:     return 'F';
             case PieceType::FoolBlack:     return 'f';
         }
@@ -111,15 +170,21 @@ namespace Pieces
             case 'q': return PieceType::QueenBlack;
             case 'k': return PieceType::KingBlack;
 
+
+
             // Custom pieces
             case 'C': return PieceType::CubistWhite;
             case 'c': return PieceType::CubistBlack;
+
             case 'S': return PieceType::SnakeWhite;
             case 's': return PieceType::SnakeBlack;
+
             case 'G': return PieceType::SoldierWhite;
             case 'g': return PieceType::SoldierBlack;
+
             case 'O': return PieceType::ObserverWhite;
             case 'o': return PieceType::ObserverBlack;
+
             case 'F': return PieceType::FoolWhite;
             case 'f': return PieceType::FoolBlack;
         }
@@ -150,15 +215,21 @@ namespace Pieces
             case PieceType::QueenBlack:  return "src/interface/assets/pieces/queen/queen_black.png";
             case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
 
+
+
             // Custom pieces
             case PieceType::CubistWhite:   return "src/interface/assets/pieces/cubist/cubist_white.png";
             case PieceType::CubistBlack:   return "src/interface/assets/pieces/cubist/cubist_black.png";
+
             case PieceType::SnakeWhite:    return "src/interface/assets/pieces/snake/snake_white.png";
             case PieceType::SnakeBlack:    return "src/interface/assets/pieces/snake/snake_black.png";
+
             case PieceType::SoldierWhite:  return "src/interface/assets/pieces/soldier/soldier_white.png";
             case PieceType::SoldierBlack:  return "src/interface/assets/pieces/soldier/soldier_black.png";
+
             case PieceType::ObserverWhite: return "src/interface/assets/pieces/observer/observer_white.png";
             case PieceType::ObserverBlack: return "src/interface/assets/pieces/observer/observer_black.png";
+
             case PieceType::FoolWhite:     return "src/interface/assets/pieces/fool/fool_white.png";
             case PieceType::FoolBlack:     return "src/interface/assets/pieces/fool/fool_black.png";
         }

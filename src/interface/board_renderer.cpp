@@ -21,11 +21,9 @@ void Renderer::m_loadPieceTextures()
 
         // Load texture
         Image image = LoadImage(Pieces::getPieceSpritePath(pieceType));
-        Texture texture = LoadTextureFromImage(image);
-        UnloadImage(image);
-
         // Cache texture
-        m_textures[i] = texture;
+        m_textures[i] = LoadTextureFromImage(image);
+        UnloadImage(image);
     }
 }
 
@@ -61,7 +59,12 @@ void Renderer::m_renderPieces(const char* FEN)
 }
 
 
-void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, const Bitboard& engineSelectedPieceMoves, const Bitboard& white, const Bitboard& black)
+void Renderer::render(
+    const char* FEN,
+    const Bitboard& engineSelectedPiece,
+    const Bitboard& engineSelectedPieceMoves,
+    const Bitboard& white,
+    const Bitboard& black)
 {
     m_renderBoardBackground();
 
@@ -99,7 +102,9 @@ void Renderer::render(const char* FEN, const Bitboard& engineSelectedPiece, cons
     Vector2 pos = { (float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize) };
     DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 255, 0, 160 });
 
+
     m_renderPieces(FEN);
+
 
     // Highlight selected piece's moves
     Bitboard moves = engineSelectedPieceMoves;

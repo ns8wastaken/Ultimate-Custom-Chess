@@ -7,8 +7,18 @@ namespace Utils
     inline uint64_t BitShift(uint64_t x, int shift)
     {
         return ((shift > 0) ? (x << shift) : (x >> -shift));
-    };
+    }
 
+
+    inline int BitCounter(uint64_t x)
+    {
+        int bitCount = 0;
+        while (x) {
+            bitCount += (x & 0x1);
+            x >>= 1;
+        }
+        return bitCount;
+    }
 
 
     /*

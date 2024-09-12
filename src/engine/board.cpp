@@ -3,6 +3,8 @@
 
 Board::Board(const char* FEN)
 {
+    pieceLookup.fill(Pieces::PieceType::None);
+
     m_precomputeMoves();
     m_loadFEN(FEN);
 
@@ -26,30 +28,92 @@ Board::Board(const char* FEN)
 
 void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to)
 {
-    // Loop through all other pieces
-    for (int i = 0; i < PieceToInt(Pieces::PieceType::PieceCount); ++i) {
-        // If there is a piece in the "from" square
-        if (to & bitboards[i]) {
-            bitboards[i] &= ~to;
+    Pieces::PieceType TYPE_OF_PIECE = pieceLookup[__builtin_ctzll(from)];
+    std::string set = std::bitset<64>(from).to_string();
+    for (int i = 0; i < 64; ++i) {
+        if (i % 8 == 0) std::cout << "\n";
+        std::cout << ((set[i] == '1') ? "1" : "0") << " ";
+    }
+    std::cout << "\n\n";
 
-            // Update the occupied squares
-            if (i < PieceToInt(Pieces::PieceType::WhitePiecesEnd)) {
-                occupiedSquaresWhite &= ~to;
-            }
-            else {
-                occupiedSquaresBlack &= ~to;
-            }
+    set = std::bitset<64>(to).to_string();
+    for (int i = 0; i < 64; ++i) {
+        if (i % 8 == 0) std::cout << "\n";
+        std::cout << ((set[i] == '1') ? "1" : "0") << " ";
+    }
+    std::cout << "\n" << Pieces::getPieceChar(TYPE_OF_PIECE);
+    std::cout << "\n\n------------------------------\n";
 
-            break;
+
+
+    // If en passant is active
+    if (enPassant.from) [[unlikely]] {
+        Pieces::PieceType enPassantPieceType = pieceLookup[__builtin_ctzll(enPassant.to)];
+
+        // Check if en passant square was attacked
+        if ((TYPE_OF_PIECE == Pieces::PieceType::PawnWhite ||
+             TYPE_OF_PIECE == Pieces::PieceType::PawnBlack) &&
+            to == enPassant.from) {
+            bitboards[PieceToInt(enPassantPieceType)] &= ~enPassant.to;
+            occupiedSquaresWhite &= ~enPassant.to;
+            occupiedSquaresBlack &= ~enPassant.to;
+        }
+
+        // Remove hitbox
+        // Occupied square will later be set to 1 for the piece's "to" location (or en passant's from location)
+        occupiedSquaresWhite &= ~enPassant.from;
+        occupiedSquaresBlack &= ~enPassant.from;
+
+
+        // Reset en passant
+        enPassant.from = 0ULL;
+        enPassant.to = 0ULL;
+    }
+
+    isWhiteTurn = !isWhiteTurn;
+    depthPly += 1;
+    depthMove += !(depthPly % 2);
+
+
+    // If the "to" square has a piece on it
+    Pieces::PieceType toPieceType = pieceLookup[__builtin_ctzll(to)];
+    if (toPieceType != Pieces::PieceType::None) {
+        // Remove killed piece from bitboards
+        bitboards[PieceToInt(toPieceType)] &= ~to;
+
+        // Remove killed piece from occupied squares
+        if (toPieceType < Pieces::PieceType::WhitePiecesEnd) {
+            occupiedSquaresWhite &= ~to;
+        }
+        else {
+            occupiedSquaresBlack &= ~to;
         }
     }
 
 
     // Move piece
-    bitboards[PieceToInt(pieceType)] &= ~from;
-    bitboards[PieceToInt(pieceType)] |= to;
+    bitboards[PieceToInt(TYPE_OF_PIECE)] &= ~from;
+    bitboards[PieceToInt(TYPE_OF_PIECE)] |= to;
 
-    if (pieceType < Pieces::PieceType::WhitePiecesEnd) {
+    pieceLookup[__builtin_ctzll(from)] = Pieces::PieceType::None;
+    pieceLookup[__builtin_ctzll(to)] = TYPE_OF_PIECE;
+
+
+    // Set en passant square if a pawn was moved 2 squares
+    if ((TYPE_OF_PIECE == Pieces::PieceType::PawnWhite) && (to == (from >> 16))) [[unlikely]] {
+        enPassant.from = from >> 8;
+        enPassant.to = to;
+        occupiedSquaresWhite |= enPassant.from;
+    }
+    else if ((TYPE_OF_PIECE == Pieces::PieceType::PawnBlack) && (to == (from << 16))) [[unlikely]] {
+        enPassant.from = from << 8;
+        enPassant.to = to;
+        occupiedSquaresBlack |= enPassant.from;
+    }
+
+
+    // Update occupied squares
+    if (TYPE_OF_PIECE < Pieces::PieceType::WhitePiecesEnd) {
         occupiedSquaresWhite &= ~from;
         occupiedSquaresWhite |= to;
         occupiedSquaresBlack &= ~to;
@@ -156,7 +220,9 @@ void Board::m_loadFEN(const char* FEN)
                     ++step;
                 }
                 else {
-                    bitboards[PieceToInt(PieceFromChar(Char))] |= 1ULL << (col_i * 8 + row_i);
+                    Pieces::PieceType pieceType = PieceFromChar(Char);
+                    bitboards[PieceToInt(pieceType)] |= 1ULL << (col_i * 8 + row_i);
+                    pieceLookup[col_i * 8 + row_i] = pieceType;
                     ++row_i;
                 }
                 break;

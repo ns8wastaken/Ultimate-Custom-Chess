@@ -9,27 +9,28 @@ Engine::Engine(const char* FEN)
 
 void Engine::update(const Vector2& mousePos)
 {
+    if (m_isVsBot && !m_board.isWhiteTurn) {
+        std::vector<Pieces::Move> moves = m_generateBotMoves();
+        Pieces::Move move = moves[0];
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to);
+        return;
+    }
+
     // Click location is of bounds
     if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
         return;
     }
 
-
-    m_selectedPieceMoves = generateMove(
-        m_selectedPiecePos,
-        m_selectedPieceType,
-        m_board.occupiedSquaresWhite,
-        m_board.occupiedSquaresBlack);
+    // Generate the selected piece's moves
+    m_selectedPieceMoves = m_generateMove(m_selectedPiecePos, m_selectedPieceType, m_board.occupiedSquaresWhite, m_board.occupiedSquaresBlack);
 
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if ((!m_isVsBot || m_board.isWhiteTurn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         int clickRow_i = (int)(mousePos.x / Constants::SquareSize);
         int clickCol_i = (int)(mousePos.y / Constants::SquareSize);
 
         // Bitmask of clicked location
         uint64_t clickLocationBitmask = 1ULL << (clickCol_i * 8 + clickRow_i);
-
-        bool pieceWasClicked = false;
 
 
         // If clicked square was part of the moves of the selected piece
@@ -44,7 +45,7 @@ void Engine::update(const Vector2& mousePos)
         }
 
 
-        // If clicked square was the selected piece
+        // If clicked square was the already selected piece
         if (clickLocationBitmask & m_selectedPiecePos) {
             m_selectedPiecePos = 0ULL;
             m_selectedPieceType = Pieces::PieceType::None;
@@ -53,20 +54,16 @@ void Engine::update(const Vector2& mousePos)
         }
 
 
+        bool pieceWasClicked = false;
+
         // Checks to see if piece was clicked
-        for (int i = 0; i < PieceCount; ++i) {
-            Pieces::PieceType pieceType = static_cast<Pieces::PieceType>(i);
-            Bitboard bitboard = m_board.bitboards[i];
+        m_selectedPieceType = m_board.pieceLookup[__builtin_ctzll(clickLocationBitmask)];
+        if (m_selectedPieceType != Pieces::PieceType::None &&
+            ((m_board.isWhiteTurn && (m_selectedPieceType < Pieces::PieceType::WhitePiecesEnd)) ||
+             (!m_board.isWhiteTurn && (m_selectedPieceType >= Pieces::PieceType::WhitePiecesEnd)))) {
 
-            // If piece was clicked
-            if (bitboard & clickLocationBitmask) {
-                pieceWasClicked = true;
-
-                m_selectedPiecePos = clickLocationBitmask;
-                m_selectedPieceType = pieceType;
-
-                break;
-            }
+            m_selectedPiecePos = clickLocationBitmask;
+            pieceWasClicked = true;
         }
 
 
@@ -82,11 +79,20 @@ void Engine::update(const Vector2& mousePos)
 
 int Engine::evaluateBoard()
 {
-    return 0.0;
+    int score = 0;
+
+    for (int i = 0; i < PieceCount; ++i) {
+        int numberOfPieces = Utils::BitCounter(m_board.bitboards[i]);
+        int pieceValue = Pieces::getPieceValue(static_cast<Pieces::PieceType>(i));
+
+        score += pieceValue * numberOfPieces;
+    }
+
+    return score;
 }
 
 
-Bitboard Engine::generateMove(
+Bitboard Engine::m_generateMove(
     const Bitboard& position,
     const Pieces::PieceType& pieceType,
     const Bitboard& occupiedSquaresWhite,
@@ -412,14 +418,57 @@ Bitboard Engine::generateMove(
 }
 
 
+std::vector<Pieces::Move> Engine::m_generateBotMoves() const
+{
+    std::vector<Pieces::Move> botMoves;
+
+    // int size = 0;
+    // for (Pieces::PieceType pieceType : m_board.pieceLookup)
+    //     if (pieceType < Pieces::PieceType::WhitePiecesEnd)
+    //         ++size;
+    // printf("pieceLookup size: %i\n", size);
+
+
+    for (size_t i = 0; i < m_board.pieceLookup.size(); ++i) {
+        Pieces::PieceType pieceType = m_board.pieceLookup[i];
+
+        if ((pieceType == Pieces::PieceType::None) ||
+            (pieceType < Pieces::PieceType::WhitePiecesEnd)) continue;
+
+        Bitboard position = 1ULL << i;
+
+        Bitboard pieceMoves = m_generateMove(position, pieceType, m_board.occupiedSquaresWhite, m_board.occupiedSquaresBlack);
+
+        int offset = 0;
+        while (pieceMoves) {
+            if (pieceMoves & 0x1) {
+                botMoves.push_back(Pieces::Move{ position, 1ULL << offset });
+            }
+            ++offset;
+            pieceMoves >>= 1;
+        }
+    }
+
+    return botMoves;
+}
+
+
 const Bitboard& Engine::c_getSelectedPiece()
 {
     return m_selectedPiecePos;
 }
 
 
-const Bitboard& Engine::c_getSelectedPieceMoves()
+const Bitboard Engine::c_getSelectedPieceMoves()
 {
+    // Bitboard moves = 0ULL;
+
+    // for (Pieces::Move& move : m_generateBotMoves()) {
+    //     if (m_board.pieceLookup[__builtin_ctzll(move.from)] >= Pieces::PieceType::WhitePiecesEnd)
+    //         moves |= move.to;
+    // }
+    // return moves;
+
     return m_selectedPieceMoves;
 }
 
