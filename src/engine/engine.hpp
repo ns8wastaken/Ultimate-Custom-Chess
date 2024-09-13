@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <vector>
 #include <string>
+#include <limits>
 
 #include "constants.hpp"
 #include "board.hpp"
@@ -25,6 +26,9 @@ public:
     void setGamemode(bool isVsBot);
 
 private:
+    int quiescentSearch(int alpha, int beta);
+    int alphaBeta(int alpha, int beta, int depth);
+
     Board m_board;
     bool m_isVsBot = true;
 
@@ -43,5 +47,5 @@ private:
     bool m_requiresNewFEN;
     void m_generateFEN();
 
-    int evaluateBoard();
+    int m_evaluateBoard();
 };

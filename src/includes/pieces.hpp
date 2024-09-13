@@ -106,8 +106,10 @@ namespace Pieces
             case PieceType::FoolBlack:     return 250;
 
             case PieceType::GodWhite:
-            case PieceType::GodBlack:      return 1000;
+            case PieceType::GodBlack:      return 1100;
         }
+
+        return 0;
     }
 
 

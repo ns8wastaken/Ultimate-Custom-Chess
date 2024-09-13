@@ -22,6 +22,7 @@ private:
 
     Button m_vsBot;
     Button m_vsFriend;
+    Button m_back;
 
     Texture m_backgroundLeft;
     Texture m_backgroundRight;
