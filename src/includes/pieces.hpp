@@ -57,6 +57,7 @@ namespace Pieces
 
     struct Move
     {
+        PieceType capturedPieceType = PieceType::None;
         uint64_t from = 0ULL;
         uint64_t to = 0ULL;
     };

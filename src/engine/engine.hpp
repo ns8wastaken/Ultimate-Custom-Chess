@@ -27,7 +27,7 @@ public:
 
 private:
     int quiescentSearch(int alpha, int beta);
-    int alphaBeta(int alpha, int beta, int depth);
+    int negaMax(int alpha);
 
     Board m_board;
     bool m_isVsBot = true;
