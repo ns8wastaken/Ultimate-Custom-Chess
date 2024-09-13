@@ -51,8 +51,19 @@ void Renderer::m_renderPieces(const char* FEN)
             ++col_i;
         }
         else {
-            Vector2 pos = { (float)(row_i * Constants::SquareSize), (float)(col_i * Constants::SquareSize) };
-            DrawTextureEx(m_textures[PieceToInt(PieceFromChar(Char))], pos, 0, (float)Constants::SquareSize / 32.0f, WHITE);
+            Texture texture = m_textures[PieceToInt(PieceFromChar(Char))];
+
+            float sizeMult = Pieces::getPieceSizeMult(Char);
+
+            float squareCenterX = (float)(row_i * Constants::SquareSize) + (float)Constants::SquareSize / 2.0f;
+            float squareCenterY = (float)(col_i * Constants::SquareSize) + (float)Constants::SquareSize / 2.0f;
+
+            Vector2 pos = {
+                squareCenterX - (float)Constants::SquareSize * sizeMult / 2.0f,
+                squareCenterY - (float)Constants::SquareSize * sizeMult / 2.0f
+            };
+
+            DrawTextureEx(texture, pos, 0, (float)Constants::SquareSize / texture.width * sizeMult, WHITE);
             ++row_i;
         }
     }

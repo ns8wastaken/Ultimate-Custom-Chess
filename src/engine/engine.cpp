@@ -26,7 +26,7 @@ void Engine::update(const Vector2& mousePos)
     m_selectedPieceMoves = m_generateMove(m_selectedPiecePos, m_selectedPieceType, m_board.occupiedSquaresWhite, m_board.occupiedSquaresBlack);
 
 
-    if ((!m_isVsBot || m_board.isWhiteTurn) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         int clickRow_i = (int)(mousePos.x / Constants::SquareSize);
         int clickCol_i = (int)(mousePos.y / Constants::SquareSize);
 
@@ -354,6 +354,7 @@ Bitboard Engine::m_generateMove(
             return moves | (m_board.precomputedMoves.kingMoves[__builtin_ctzll(kingPos)] & ~occupiedSquaresBlack);
         }
 
+
         case Pieces::PieceType::FoolWhite:
         case Pieces::PieceType::FoolBlack: {
             Bitboard moves = m_board.precomputedMoves.foolMoves[__builtin_ctzll(position)];
@@ -413,6 +414,13 @@ Bitboard Engine::m_generateMove(
 
             return moves & ~((pieceType == Pieces::PieceType::FoolWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
         }
+
+
+        case Pieces::PieceType::GodWhite:
+        case Pieces::PieceType::GodBlack: {
+            Bitboard moves = m_board.precomputedMoves.godMoves[__builtin_ctzll(position)];
+            return moves & ~((pieceType == Pieces::PieceType::GodWhite) ? occupiedSquaresWhite : occupiedSquaresBlack);
+        }
     }
 
     return 0ULL;
@@ -428,7 +436,6 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
 
         if ((pieceType == Pieces::PieceType::None) ||
             (pieceType < Pieces::PieceType::WhitePiecesEnd)) {
-            printf("yayy1 %c\n", Pieces::getPieceChar(pieceType));
             continue;
         }
 
@@ -445,8 +452,6 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
             pieceMoves >>= 1;
         }
     }
-
-    std::cout << botMoves.size() << "-----------------------------------\n\n";
 
     return botMoves;
 }
@@ -517,6 +522,11 @@ const char* Engine::c_getFEN()
     return m_FEN.c_str();
 }
 
+
+void Engine::setGamemode(bool isVsBot)
+{
+    m_isVsBot = isVsBot;
+}
 
 
 const Bitboard& Engine::c_getOccupiedSquaresWhite()

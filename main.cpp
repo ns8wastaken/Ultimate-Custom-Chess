@@ -10,7 +10,7 @@ int main()
 {
     InitWindow(Constants::ScreenSize, Constants::ScreenSize, "Ultimate Custom Chess");
 
-    Image icon = LoadImage("src/interface/assets/pieces/pawn/pawn_white.png");
+    Image icon = LoadImage("src/assets/pieces/pawn/pawn_white.png");
     SetWindowIcon(icon);
     UnloadImage(icon);
 

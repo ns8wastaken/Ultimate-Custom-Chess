@@ -27,12 +27,13 @@ private:
         std::array<Bitboard, 64> kingMoves;
         std::array<Bitboard, 64> cubistMoves;
         std::array<Bitboard, 64> foolMoves;
+        std::array<Bitboard, 64> godMoves;
     };
 
 public:
     Board(const char* FEN);
 
-    void makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to);
+    void makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to);
 
     BitboardArray bitboards;
     PrecomputedMoves precomputedMoves;

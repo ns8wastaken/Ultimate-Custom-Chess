@@ -26,7 +26,7 @@ Board::Board(const char* FEN)
 }
 
 
-void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, const Bitboard& to)
+void Board::makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to)
 {
     isWhiteTurn = !isWhiteTurn;
     depthPly += 1;
@@ -34,7 +34,7 @@ void Board::makeMove(const Pieces::PieceType& pieceType, const Bitboard& from, c
 
 
     // If en passant is active
-    if (enPassant.from) [[unlikely]] {
+    if (enPassant.from) {
         Pieces::PieceType enPassantPieceType = pieceLookup[__builtin_ctzll(enPassant.to)];
 
         // Check if en passant square was attacked
@@ -175,6 +175,12 @@ void Board::m_precomputeMoves()
             precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, 1) & Utils::BitMaskB;
             precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, -1) & Utils::BitMaskA;
             precomputedMoves.foolMoves[i] |= Utils::BitShift(1ULL << i, -8);
+        }
+
+
+        // God
+        {
+            precomputedMoves.godMoves[i] = precomputedMoves.kingMoves[i] | precomputedMoves.cubistMoves[i];
         }
     }
 }

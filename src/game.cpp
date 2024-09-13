@@ -4,12 +4,12 @@
 
 
 Game::Game()
-    : m_engine("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"),
-      m_play(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 }, "src/interface/assets/ui/buttons/play.png"),
-      m_vsBot(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 - Constants::ButtonSize * 11 }, "src/interface/assets/ui/buttons/vs_bot.png"),
-      m_vsFriend(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 11 }, "src/interface/assets/ui/buttons/vs_friend.png"),
-      m_backgroundLeft(LoadTexture("src/interface/assets/ui/background_left.png")),
-      m_backgroundRight(LoadTexture("src/interface/assets/ui/background_right.png"))
+    : m_engine("rnbqkbnr/ppggpppp/8/8/8/8/PPPPGGPP/RNBQKBNR w"),
+      m_play(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 }, "src/assets/ui/buttons/play.png"),
+      m_vsBot(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 - Constants::ButtonSize * 11 }, "src/assets/ui/buttons/vs_bot.png"),
+      m_vsFriend(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 11 }, "src/assets/ui/buttons/vs_friend.png"),
+      m_backgroundLeft(LoadTexture("src/assets/ui/background_left.png")),
+      m_backgroundRight(LoadTexture("src/assets/ui/background_right.png"))
 {}
 
 
@@ -25,10 +25,12 @@ void Game::update()
 
         case 1: {
             if (m_vsBot.update(mousePos)) {
-                m_mode = 1;
+                m_engine.setGamemode(true);
+                m_mode = 2;
             }
 
             if (m_vsFriend.update(mousePos)) {
+                m_engine.setGamemode(false);
                 m_mode = 2;
             }
         } break;

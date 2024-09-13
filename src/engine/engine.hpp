@@ -22,6 +22,8 @@ public:
     const Bitboard& c_getOccupiedSquaresWhite();
     const Bitboard& c_getOccupiedSquaresBlack();
 
+    void setGamemode(bool isVsBot);
+
 private:
     Board m_board;
     bool m_isVsBot = true;

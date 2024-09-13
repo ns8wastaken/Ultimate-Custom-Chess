@@ -23,6 +23,7 @@ namespace Pieces
         SoldierWhite,
         ObserverWhite,
         FoolWhite,
+        GodWhite,
 
 
 
@@ -39,6 +40,7 @@ namespace Pieces
         SoldierBlack,
         ObserverBlack,
         FoolBlack,
+        GodBlack,
 
 
 
@@ -102,6 +104,9 @@ namespace Pieces
 
             case PieceType::FoolWhite:
             case PieceType::FoolBlack:     return 250;
+
+            case PieceType::GodWhite:
+            case PieceType::GodBlack:      return 1000;
         }
     }
 
@@ -137,14 +142,17 @@ namespace Pieces
             case PieceType::SnakeWhite:    return 'S';
             case PieceType::SnakeBlack:    return 's';
 
-            case PieceType::SoldierWhite:  return 'G';
-            case PieceType::SoldierBlack:  return 'g';
+            case PieceType::SoldierWhite:  return 'W';
+            case PieceType::SoldierBlack:  return 'w';
 
             case PieceType::ObserverWhite: return 'O';
             case PieceType::ObserverBlack: return 'o';
 
             case PieceType::FoolWhite:     return 'F';
             case PieceType::FoolBlack:     return 'f';
+
+            case PieceType::GodWhite:      return 'G';
+            case PieceType::GodBlack:      return 'g';
         }
 
         return '\0';
@@ -179,14 +187,17 @@ namespace Pieces
             case 'S': return PieceType::SnakeWhite;
             case 's': return PieceType::SnakeBlack;
 
-            case 'G': return PieceType::SoldierWhite;
-            case 'g': return PieceType::SoldierBlack;
+            case 'W': return PieceType::SoldierWhite;
+            case 'w': return PieceType::SoldierBlack;
 
             case 'O': return PieceType::ObserverWhite;
             case 'o': return PieceType::ObserverBlack;
 
             case 'F': return PieceType::FoolWhite;
             case 'f': return PieceType::FoolBlack;
+
+            case 'G': return PieceType::GodWhite;
+            case 'g': return PieceType::GodBlack;
         }
 
         return PieceType::None;
@@ -200,41 +211,89 @@ namespace Pieces
             case PieceType::PieceCount: return "";
 
             // White default pieces
-            case PieceType::PawnWhite:   return "src/interface/assets/pieces/pawn/pawn_white.png";
-            case PieceType::KnightWhite: return "src/interface/assets/pieces/knight/knight_white.png";
-            case PieceType::BishopWhite: return "src/interface/assets/pieces/bishop/bishop_white.png";
-            case PieceType::RookWhite:   return "src/interface/assets/pieces/rook/rook_white.png";
-            case PieceType::QueenWhite:  return "src/interface/assets/pieces/queen/queen_white.png";
-            case PieceType::KingWhite:   return "src/interface/assets/pieces/king/king_white.png";
+            case PieceType::PawnWhite:   return "src/assets/pieces/pawn/pawn_white.png";
+            case PieceType::KnightWhite: return "src/assets/pieces/knight/knight_white.png";
+            case PieceType::BishopWhite: return "src/assets/pieces/bishop/bishop_white.png";
+            case PieceType::RookWhite:   return "src/assets/pieces/rook/rook_white.png";
+            case PieceType::QueenWhite:  return "src/assets/pieces/queen/queen_white.png";
+            case PieceType::KingWhite:   return "src/assets/pieces/king/king_white.png";
 
             // Black default pieces
-            case PieceType::PawnBlack:   return "src/interface/assets/pieces/pawn/pawn_black.png";
-            case PieceType::KnightBlack: return "src/interface/assets/pieces/knight/knight_black.png";
-            case PieceType::BishopBlack: return "src/interface/assets/pieces/bishop/bishop_black.png";
-            case PieceType::RookBlack:   return "src/interface/assets/pieces/rook/rook_black.png";
-            case PieceType::QueenBlack:  return "src/interface/assets/pieces/queen/queen_black.png";
-            case PieceType::KingBlack:   return "src/interface/assets/pieces/king/king_black.png";
+            case PieceType::PawnBlack:   return "src/assets/pieces/pawn/pawn_black.png";
+            case PieceType::KnightBlack: return "src/assets/pieces/knight/knight_black.png";
+            case PieceType::BishopBlack: return "src/assets/pieces/bishop/bishop_black.png";
+            case PieceType::RookBlack:   return "src/assets/pieces/rook/rook_black.png";
+            case PieceType::QueenBlack:  return "src/assets/pieces/queen/queen_black.png";
+            case PieceType::KingBlack:   return "src/assets/pieces/king/king_black.png";
 
 
 
             // Custom pieces
-            case PieceType::CubistWhite:   return "src/interface/assets/pieces/cubist/cubist_white.png";
-            case PieceType::CubistBlack:   return "src/interface/assets/pieces/cubist/cubist_black.png";
+            case PieceType::CubistWhite:   return "src/assets/pieces/cubist/cubist_white.png";
+            case PieceType::CubistBlack:   return "src/assets/pieces/cubist/cubist_black.png";
 
-            case PieceType::SnakeWhite:    return "src/interface/assets/pieces/snake/snake_white.png";
-            case PieceType::SnakeBlack:    return "src/interface/assets/pieces/snake/snake_black.png";
+            case PieceType::SnakeWhite:    return "src/assets/pieces/snake/snake_white.png";
+            case PieceType::SnakeBlack:    return "src/assets/pieces/snake/snake_black.png";
 
-            case PieceType::SoldierWhite:  return "src/interface/assets/pieces/soldier/soldier_white.png";
-            case PieceType::SoldierBlack:  return "src/interface/assets/pieces/soldier/soldier_black.png";
+            case PieceType::SoldierWhite:  return "src/assets/pieces/soldier/soldier_white.png";
+            case PieceType::SoldierBlack:  return "src/assets/pieces/soldier/soldier_black.png";
 
-            case PieceType::ObserverWhite: return "src/interface/assets/pieces/observer/observer_white.png";
-            case PieceType::ObserverBlack: return "src/interface/assets/pieces/observer/observer_black.png";
+            case PieceType::ObserverWhite: return "src/assets/pieces/observer/observer_white.png";
+            case PieceType::ObserverBlack: return "src/assets/pieces/observer/observer_black.png";
 
-            case PieceType::FoolWhite:     return "src/interface/assets/pieces/fool/fool_white.png";
-            case PieceType::FoolBlack:     return "src/interface/assets/pieces/fool/fool_black.png";
+            case PieceType::FoolWhite:     return "src/assets/pieces/fool/fool_white.png";
+            case PieceType::FoolBlack:     return "src/assets/pieces/fool/fool_black.png";
+
+            case PieceType::GodWhite:      return "src/assets/pieces/god/god_white.png";
+            case PieceType::GodBlack:      return "src/assets/pieces/god/god_black.png";
         }
 
         return "";
+    };
+
+
+    constexpr float getPieceSizeMult(char c)
+    {
+        switch (c) {
+            // White default pieces
+            case 'P': return 1.0f;
+            case 'N': return 1.0f;
+            case 'B': return 1.0f;
+            case 'R': return 1.0f;
+            case 'Q': return 1.0f;
+            case 'K': return 1.0f;
+
+            // Black default pieces
+            case 'p': return 1.0f;
+            case 'n': return 1.0f;
+            case 'b': return 1.0f;
+            case 'r': return 1.0f;
+            case 'q': return 1.0f;
+            case 'k': return 1.0f;
+
+
+
+            // Custom pieces
+            case 'C': return 1.0f;
+            case 'c': return 1.0f;
+
+            case 'S': return 1.0f;
+            case 's': return 1.0f;
+
+            case 'W': return 1.0f;
+            case 'w': return 1.0f;
+
+            case 'O': return 1.0f;
+            case 'o': return 1.0f;
+
+            case 'F': return 1.0f;
+            case 'f': return 1.0f;
+
+            case 'G': return 1.0f;
+            case 'g': return 1.0f;
+        }
+
+        return 0.0f;
     };
 
 }
