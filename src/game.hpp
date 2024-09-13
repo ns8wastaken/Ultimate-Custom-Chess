@@ -2,7 +2,7 @@
 #include "engine/engine.hpp"
 #include "interface/board_renderer.hpp"
 
-#include "button.cpp"
+#include "interface/button.cpp"
 
 
 class Game

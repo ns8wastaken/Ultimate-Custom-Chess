@@ -1,11 +1,12 @@
-CPP = g++ -g -Wall -pedantic -Wextra main.cpp
+CPP = g++ src/main.cpp
+ARGS = -g -Wall -pedantic -Wextra
 DEPS_RAYLIB = -L C:/raylib/lib -lraylib -lgdi32 -lwinmm
 
 all: compile makebin finish open
 
 compile:
 	mkdir -p bin/assets
-	$(CPP) -Isrc/includes -I C:/raylib/include -o bin/main.exe $(DEPS_RAYLIB)
+	$(CPP) $(ARGS) -Isrc/includes -I C:/raylib/include -o bin/main.exe $(DEPS_RAYLIB)
 
 makebin:
 	cp -r src/assets/* bin/assets

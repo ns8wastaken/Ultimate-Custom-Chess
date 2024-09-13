@@ -3,7 +3,7 @@
 #include <bitset>
 
 #include "constants.hpp"
-#include "src/game.cpp"
+#include "game.cpp"
 
 
 int main()
