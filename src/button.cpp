@@ -7,7 +7,10 @@ Button::Button(Vector2 pos, const char* imagePath)
     m_texture = LoadTextureFromImage(image);
     UnloadImage(image);
 
-    m_pos = Vector2{ pos.x - (m_texture.width / 2) * Constants::ButtonSize, pos.y - (m_texture.height / 2) * Constants::ButtonSize };
+    m_pos = Vector2{
+        pos.x - (m_texture.width / 2) * Constants::ButtonSize,
+        pos.y - (m_texture.height / 2) * Constants::ButtonSize
+    };
 }
 
 
@@ -20,8 +23,8 @@ bool Button::update(const Vector2& mousePos)
                    m_pos.x,
                    m_pos.y,
                    (float)(m_texture.width * Constants::ButtonSize),
-                   (float)(m_texture.height * Constants::ButtonSize) })
-        && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+                   (float)(m_texture.height * Constants::ButtonSize) }) &&
+           IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
 

@@ -5,11 +5,11 @@
 
 Game::Game()
     : m_engine("rnbqkbnr/ppggpppp/8/8/8/8/PPPPGGPP/RNBQKBNR w"),
-      m_play(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 }, "src/assets/ui/buttons/play.png"),
-      m_vsBot(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 - Constants::ButtonSize * 11 }, "src/assets/ui/buttons/vs_bot.png"),
-      m_vsFriend(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 11 }, "src/assets/ui/buttons/vs_friend.png"),
-      m_backgroundLeft(LoadTexture("src/assets/ui/background_left.png")),
-      m_backgroundRight(LoadTexture("src/assets/ui/background_right.png"))
+      m_play(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 }, "assets/ui/buttons/play.png"),
+      m_vsBot(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 - Constants::ButtonSize * 11 }, "assets/ui/buttons/vs_bot.png"),
+      m_vsFriend(Vector2{ Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 11 }, "assets/ui/buttons/vs_friend.png"),
+      m_backgroundLeft(LoadTexture("assets/ui/background_left.png")),
+      m_backgroundRight(LoadTexture("assets/ui/background_right.png"))
 {}
 
 

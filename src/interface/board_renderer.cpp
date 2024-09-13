@@ -1,7 +1,7 @@
 #include "board_renderer.hpp"
 
 
-Renderer::Renderer() : m_boardShader(LoadShader(0, "src/interface/shaders/board.fs"))
+Renderer::Renderer() : m_boardShader(LoadShader(0, "assets/shaders/board.fs"))
 {
     m_loadPieceTextures();
 
@@ -21,6 +21,7 @@ void Renderer::m_loadPieceTextures()
 
         // Load texture
         Image image = LoadImage(Pieces::getPieceSpritePath(pieceType));
+
         // Cache texture
         m_textures[i] = LoadTextureFromImage(image);
         UnloadImage(image);
@@ -55,12 +56,11 @@ void Renderer::m_renderPieces(const char* FEN)
 
             float sizeMult = Pieces::getPieceSizeMult(Char);
 
-            float squareCenterX = (float)(row_i * Constants::SquareSize) + (float)Constants::SquareSize / 2.0f;
-            float squareCenterY = (float)(col_i * Constants::SquareSize) + (float)Constants::SquareSize / 2.0f;
+            float centeringFactor = (float)Constants::SquareSize / 2.0f - (float)Constants::SquareSize * sizeMult / 2.0f;
 
             Vector2 pos = {
-                squareCenterX - (float)Constants::SquareSize * sizeMult / 2.0f,
-                squareCenterY - (float)Constants::SquareSize * sizeMult / 2.0f
+                (float)(row_i * Constants::SquareSize) + centeringFactor,
+                (float)(col_i * Constants::SquareSize) + centeringFactor
             };
 
             DrawTextureEx(texture, pos, 0, (float)Constants::SquareSize / texture.width * sizeMult, WHITE);
