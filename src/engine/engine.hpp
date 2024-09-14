@@ -26,8 +26,8 @@ public:
     void setGamemode(bool isVsBot);
 
 private:
-    int quiescentSearch(int alpha, int beta);
-    int negaMax(int alpha);
+    int m_quiescentSearch(int alpha, int beta);
+    int m_miniMax(int depth, int mini, int max, bool isMaxing);
 
     Board m_board;
     bool m_isVsBot = true;
@@ -40,7 +40,8 @@ private:
         const Bitboard& position,
         const Pieces::PieceType& pieceType,
         const Bitboard& occupiedSquaresWhite,
-        const Bitboard& occupiedSquaresBlack) const;
+        const Bitboard& occupiedSquaresBlack
+    ) const;
     std::vector<Pieces::Move> m_generateBotMoves() const;
 
     std::string m_FEN = "";

@@ -26,8 +26,12 @@ Board::Board(const char* FEN)
 }
 
 
-void Board::makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to)
+void Board::makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to, bool addToHistory)
 {
+    if (addToHistory) {
+        m_moveHistory.push(Pieces::HistoryMove{pieceLookup[__builtin_ctzll(to)], from, to});
+    }
+
     isWhiteTurn = !isWhiteTurn;
     depthPly += 1;
     depthMove += !(depthPly % 2);
@@ -227,4 +231,23 @@ void Board::m_loadFEN(const char* FEN)
             }
         }
     }
+}
+
+
+void Board::undoMove()
+{
+    Pieces::HistoryMove move = m_moveHistory.top();
+    m_moveHistory.pop();
+
+    makeMove(pieceLookup[__builtin_ctzll(move.to)], move.to, move.from, false);
+
+    if (move.capturedPieceType == Pieces::PieceType::None) return;
+
+    bitboards[PieceToInt(move.capturedPieceType)] |= move.to;
+    pieceLookup[__builtin_ctzll(move.to)] = move.capturedPieceType;
+
+    if (move.capturedPieceType < Pieces::PieceType::WhitePiecesEnd)
+        occupiedSquaresWhite |= move.to;
+    else
+        occupiedSquaresBlack |= move.to;
 }

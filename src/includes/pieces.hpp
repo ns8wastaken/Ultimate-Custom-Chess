@@ -57,6 +57,13 @@ namespace Pieces
 
     struct Move
     {
+        uint64_t from = 0ULL;
+        uint64_t to = 0ULL;
+    };
+
+
+    struct HistoryMove
+    {
         PieceType capturedPieceType = PieceType::None;
         uint64_t from = 0ULL;
         uint64_t to = 0ULL;
@@ -86,7 +93,7 @@ namespace Pieces
             case PieceType::QueenBlack:  return 900;
 
             case PieceType::KingWhite:
-            case PieceType::KingBlack:   return 314159265;
+            case PieceType::KingBlack:   return 31415926;
 
 
 

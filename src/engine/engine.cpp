@@ -10,21 +10,23 @@ Engine::Engine(const char* FEN)
 void Engine::update(const Vector2& mousePos)
 {
     if (m_isVsBot && !m_board.isWhiteTurn) {
-        printf("Score: %i\n", negaMax(3));
+        printf("Score: %i\n", m_miniMax(3, -std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), true));
         // printf("Score: %i\n", m_evaluateBoard());
 
         std::vector<Pieces::Move> moves = m_generateBotMoves();
         Pieces::Move move = moves[0];
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to);
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
         m_requiresNewFEN = true;
 
         return;
     }
 
+
     // Click location is of bounds
     if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
         return;
     }
+
 
     // Generate the selected piece's moves
     m_selectedPieceMoves = m_generateMove(m_selectedPiecePos, m_selectedPieceType, m_board.occupiedSquaresWhite, m_board.occupiedSquaresBlack);
@@ -41,7 +43,7 @@ void Engine::update(const Vector2& mousePos)
 
         // If clicked square was part of the moves of the selected piece
         if (clickLocationBitmask & m_selectedPieceMoves) {
-            m_board.makeMove(m_selectedPieceType, m_selectedPiecePos, clickLocationBitmask);
+            m_board.makeMove(m_selectedPieceType, m_selectedPiecePos, clickLocationBitmask, true);
             m_requiresNewFEN = true;
 
             m_selectedPiecePos = 0ULL;
@@ -95,7 +97,7 @@ int Engine::m_evaluateBoard()
 }
 
 
-int Engine::quiescentSearch(int alpha, int beta)
+int Engine::m_quiescentSearch(int alpha, int beta)
 {
     int eval = m_evaluateBoard();
     if (eval >= beta) return beta;
@@ -105,13 +107,9 @@ int Engine::quiescentSearch(int alpha, int beta)
     for (Pieces::Move move : m_generateBotMoves()) {
         if (m_board.pieceLookup[__builtin_ctzll(move.to)] == Pieces::PieceType::None) continue;
 
-        // Make move
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to);
-
-        int score = -quiescentSearch(-beta, -alpha);
-
-        // Unmake move
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.to)], move.to, move.from);
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+        int score = -m_quiescentSearch(-beta, -alpha);
+        m_board.undoMove();
 
         if (score >= beta) return beta;
 
@@ -122,37 +120,46 @@ int Engine::quiescentSearch(int alpha, int beta)
 }
 
 
-int Engine::negaMax(int depth)
+int Engine::m_miniMax(int depth, int alpha, int beta, bool isMaxing)
 {
-    if (depth == 0) return -m_evaluateBoard();
+    if (depth == 0) return m_evaluateBoard();
 
-    int max = -std::numeric_limits<int>::infinity();
+    if (isMaxing) {
+        int maxEval = -std::numeric_limits<int>::max();
 
-    for (Pieces::Move move : m_generateBotMoves()) {
-        // Make move
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to);
+        for (Pieces::Move move : m_generateBotMoves()) {
+            if (m_board.pieceLookup[__builtin_ctzll(move.to)] == Pieces::PieceType::None) continue;
 
-        int score = -negaMax(depth - 1);
+            m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+            int score = -m_miniMax(depth - 1, alpha, beta, false);
+            m_board.undoMove();
 
-        // Unmake move
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.to)], move.to, move.from);
+            maxEval = std::max(maxEval, score);
+            alpha = std::max(alpha, score);
 
-        if (move.capturedPieceType != Pieces::PieceType::None) {
-            m_board.bitboards[PieceToInt(move.capturedPieceType)] |= move.to;
-            m_board.pieceLookup[__builtin_ctzll(move.to)] = move.capturedPieceType;
-
-            if (move.capturedPieceType < Pieces::PieceType::WhitePiecesEnd) {
-                m_board.occupiedSquaresWhite |= move.to;
-            }
-            else {
-                m_board.occupiedSquaresBlack |= move.to;
-            }
+            if (beta <= alpha) break;
         }
 
-        if (score > max) max = score;
+        return maxEval;
     }
+    else {
+        int minEval = std::numeric_limits<int>::max();
 
-    return max;
+        for (Pieces::Move move : m_generateBotMoves()) {
+            if (m_board.pieceLookup[__builtin_ctzll(move.to)] == Pieces::PieceType::None) continue;
+
+            m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+            int score = -m_miniMax(depth - 1, alpha, beta, true);
+            m_board.undoMove();
+
+            minEval = std::min(minEval, score);
+            beta = std::min(beta, score);
+
+            if (beta <= alpha) break;
+        }
+
+        return minEval;
+    }
 }
 
 
@@ -160,7 +167,8 @@ Bitboard Engine::m_generateMove(
     const Bitboard& position,
     const Pieces::PieceType& pieceType,
     const Bitboard& occupiedSquaresWhite,
-    const Bitboard& occupiedSquaresBlack) const
+    const Bitboard& occupiedSquaresBlack
+) const
 {
     const Bitboard occupiedSquaresAll = (occupiedSquaresWhite | occupiedSquaresBlack);
 
@@ -214,7 +222,7 @@ Bitboard Engine::m_generateMove(
             int distUp = 7 - (zeros / 8);
             int distDown = zeros / 8;
 
-            int shifts[] = { 9, -9, 7, -7 };
+            int shifts[] = {9, -9, 7, -7};
 
             int maxLengths[] = {
                 std::min(distLeft, distUp),    // Top left
@@ -243,7 +251,7 @@ Bitboard Engine::m_generateMove(
         case Pieces::PieceType::RookBlack: {
             int zeros = __builtin_ctzll(position);
 
-            int shifts[] = { 1, -1, 8, -8 };
+            int shifts[] = {1, -1, 8, -8};
 
             int maxLengths[] = {
                 7 - (zeros % 8),
@@ -277,7 +285,7 @@ Bitboard Engine::m_generateMove(
             int distUp = 7 - (zeros / 8);
             int distDown = zeros / 8;
 
-            int shifts[] = { 1, -1, 8, -8, 9, -9, 7, -7 };
+            int shifts[] = {1, -1, 8, -8, 9, -9, 7, -7};
 
             int maxLengths[] = {
                 distLeft,
@@ -502,7 +510,6 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
             continue;
         }
 
-
         Bitboard position = 1ULL << i;
 
         Bitboard pieceMoves = m_generateMove(position, pieceType, m_board.occupiedSquaresWhite, m_board.occupiedSquaresBlack);
@@ -511,7 +518,7 @@ std::vector<Pieces::Move> Engine::m_generateBotMoves() const
         while (pieceMoves) {
             if (pieceMoves & 0x1) {
                 Bitboard newPos = 1ULL << offset;
-                botMoves.push_back(Pieces::Move{ m_board.pieceLookup[__builtin_ctzll(newPos)], position, newPos });
+                botMoves.push_back(Pieces::Move{position, newPos});
             }
             ++offset;
             pieceMoves >>= 1;

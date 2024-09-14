@@ -1,15 +1,15 @@
 CPP = g++ src/main.cpp
-ARGS = -g -Wall -pedantic -Wextra
+ARGS = -std=c++20 -g -Wall -pedantic -Wextra
 DEPS_RAYLIB = -L C:/raylib/lib -lraylib -lgdi32 -lwinmm
 
-all: compile makebin finish open
+all: compile finish open
 
 compile:
-	mkdir -p bin/assets
+	@mkdir -p bin/assets
 	$(CPP) $(ARGS) -Isrc/includes -I C:/raylib/include -o bin/main.exe $(DEPS_RAYLIB)
 
-makebin:
-	cp -r src/assets/* bin/assets
+copy-assets:
+	@cp -r src/assets/* bin/assets
 
 finish:
 	@echo -e "\033[0;32m== Done ==\e[0m"

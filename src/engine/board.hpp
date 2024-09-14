@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cctype>
 #include <array>
+#include <stack>
 
 #include "utils.hpp"
 #include "pieces.hpp"
@@ -33,7 +34,7 @@ private:
 public:
     Board(const char* FEN);
 
-    void makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to);
+    void makeMove(const Pieces::PieceType pieceType, const Bitboard& from, const Bitboard& to, bool addToHistory);
 
     BitboardArray bitboards;
     PrecomputedMoves precomputedMoves;
@@ -52,10 +53,14 @@ public:
     Bitboard initialPawnsWhite = 0ULL;
     Bitboard initialPawnsBlack = 0ULL;
 
+    void undoMove();
+
 private:
     // From: en passant hitbox
     // To: current position
     Pieces::Move enPassant;
+
+    std::stack<Pieces::HistoryMove> m_moveHistory{};
 
     void m_precomputeMoves();
     void m_loadFEN(const char* FEN);
