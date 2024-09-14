@@ -14,6 +14,9 @@ public:
     void render();
 
 private:
+    // 0: Main menu
+    // 1: Play menu
+    // 2: Game
     char m_mode = 0;
     Engine m_engine;
     Renderer m_renderer;

@@ -5,6 +5,7 @@
 #include <array>
 
 #include "constants.hpp"
+#include "settings.hpp"
 #include "pieces.hpp"
 
 
@@ -31,10 +32,11 @@ public:
 
 private:
     void m_loadPieceTextures();
+    void m_generateBoardBackground();
 
-    Shader m_boardShader;
-    Texture m_textureBlank;
+    int m_backgroundColorIndex = 0;
 
-    void m_renderBoardBackground();
+    Texture m_boardTexture;
+
     void m_renderPieces(const char* FEN);
 };

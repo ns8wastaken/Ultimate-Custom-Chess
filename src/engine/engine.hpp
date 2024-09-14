@@ -4,6 +4,9 @@
 #include <string>
 #include <limits>
 
+#include <thread>
+#include <future>
+
 #include "constants.hpp"
 #include "board.hpp"
 
@@ -14,7 +17,6 @@ public:
     Engine(const char* FEN);
 
     void update(const Vector2& mousePos);
-
 
     const char* c_getFEN();
     const Bitboard& c_getSelectedPiece();
@@ -27,7 +29,9 @@ public:
 
 private:
     int m_quiescentSearch(int alpha, int beta);
-    int m_miniMax(int depth, int mini, int max, bool isMaxing);
+    int m_alphaBetaMax(int depth, int alpha, int beta);
+    int m_alphaBetaMin(int depth, int alpha, int beta);
+    Pieces::Move m_bestMove = {0ULL, 0ULL};
 
     Board m_board;
     bool m_isVsBot = true;

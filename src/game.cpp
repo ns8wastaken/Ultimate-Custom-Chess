@@ -4,8 +4,10 @@
 
 
 Game::Game()
-    : m_engine("rnbqkbnr/ppggpppp/8/8/8/8/PPPPGGPP/RNBQKBNR w"),
+    : m_engine("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"),
+
       m_play(Vector2{Constants::ScreenSize / 2, Constants::ScreenSize / 2}, "assets/ui/buttons/play.png"),
+
       m_vsBot(Vector2{Constants::ScreenSize / 2, Constants::ScreenSize / 2 - Constants::ButtonSize * 11}, "assets/ui/buttons/vs_bot.png"),
       m_vsFriend(Vector2{Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 11}, "assets/ui/buttons/vs_friend.png"),
       m_back(Vector2{Constants::ScreenSize / 2, Constants::ScreenSize / 2 + Constants::ButtonSize * 33}, "assets/ui/buttons/back.png")

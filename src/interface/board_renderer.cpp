@@ -1,14 +1,10 @@
 #include "board_renderer.hpp"
 
 
-Renderer::Renderer() : m_boardShader(LoadShader(0, "assets/shaders/board.fs"))
+Renderer::Renderer()
 {
     m_loadPieceTextures();
-
-    // Generate blank texture for shader
-    Image imBlank = GenImageColor(Constants::ScreenSize, Constants::ScreenSize, BLANK);
-    m_textureBlank = LoadTextureFromImage(imBlank);
-    UnloadImage(imBlank);
+    m_generateBoardBackground();
 }
 
 
@@ -29,11 +25,38 @@ void Renderer::m_loadPieceTextures()
 }
 
 
-void Renderer::m_renderBoardBackground()
+void Renderer::m_generateBoardBackground()
 {
-    BeginShaderMode(m_boardShader);
-    DrawTextureV(m_textureBlank, Vector2{ 0, 0 }, WHITE);
-    EndShaderMode();
+    Image chessboard = GenImageColor(Constants::ScreenSize, Constants::ScreenSize, WHITE);
+
+    for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < 8; x++) {
+            if ((x + y) % 2 == 0) {
+                ImageDrawRectangle(
+                    &chessboard,
+                    x * Constants::SquareSize,
+                    y * Constants::SquareSize,
+                    Constants::SquareSize,
+                    Constants::SquareSize,
+                    Settings::BackgroundColors[m_backgroundColorIndex].dark
+                );
+            }
+            else {
+                ImageDrawRectangle(
+                    &chessboard,
+                    x * Constants::SquareSize,
+                    y * Constants::SquareSize,
+                    Constants::SquareSize,
+                    Constants::SquareSize,
+                    Settings::BackgroundColors[m_backgroundColorIndex].light
+                );
+            }
+        }
+    }
+
+    m_boardTexture = LoadTextureFromImage(chessboard);
+
+    UnloadImage(chessboard);
 }
 
 
@@ -75,9 +98,10 @@ void Renderer::render(
     const Bitboard& engineSelectedPiece,
     const Bitboard& engineSelectedPieceMoves,
     const Bitboard& white,
-    const Bitboard& black)
+    const Bitboard& black
+)
 {
-    m_renderBoardBackground();
+    DrawTextureEx(m_boardTexture, Vector2{0, 0}, 0, 1, Color{255, 255, 255, 255});
 
 
 
@@ -86,8 +110,8 @@ void Renderer::render(
     Bitboard whites = white;
     int zeroswhite = __builtin_ctzll(whites);
     while (zeroswhite < 64) {
-        Vector2 pos = { (float)((zeroswhite % 8) * Constants::SquareSize), (float)((zeroswhite / 8) * Constants::SquareSize) };
-        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 0, 255, 120 });
+        Vector2 pos = {(float)((zeroswhite % 8) * Constants::SquareSize), (float)((zeroswhite / 8) * Constants::SquareSize)};
+        DrawRectangleV(pos, Vector2{Constants::SquareSize, Constants::SquareSize}, Color{255, 0, 255, 120});
 
         whites ^= (1ULL << zeroswhite);
         zeroswhite = __builtin_ctzll(whites);
@@ -97,8 +121,8 @@ void Renderer::render(
     Bitboard blacks = black;
     int zerosblack = __builtin_ctzll(blacks);
     while (zerosblack < 64) {
-        Vector2 pos = { (float)((zerosblack % 8) * Constants::SquareSize), (float)((zerosblack / 8) * Constants::SquareSize) };
-        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 0, 255, 255, 120 });
+        Vector2 pos = {(float)((zerosblack % 8) * Constants::SquareSize), (float)((zerosblack / 8) * Constants::SquareSize)};
+        DrawRectangleV(pos, Vector2{Constants::SquareSize, Constants::SquareSize}, Color{0, 255, 255, 120});
 
         blacks ^= (1ULL << zerosblack);
         zerosblack = __builtin_ctzll(blacks);
@@ -110,8 +134,8 @@ void Renderer::render(
 
     // Highlight selected piece
     int zeros = __builtin_ctzll(engineSelectedPiece);
-    Vector2 pos = { (float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize) };
-    DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 255, 0, 160 });
+    Vector2 pos = {(float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize)};
+    DrawRectangleV(pos, Vector2{Constants::SquareSize, Constants::SquareSize}, Color{255, 255, 0, 160});
 
 
     m_renderPieces(FEN);
@@ -121,8 +145,8 @@ void Renderer::render(
     Bitboard moves = engineSelectedPieceMoves;
     zeros = __builtin_ctzll(moves);
     while (zeros < 64) {
-        Vector2 pos = { (float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize) };
-        DrawRectangleV(pos, Vector2{ Constants::SquareSize, Constants::SquareSize }, Color{ 255, 0, 0, 120 });
+        Vector2 pos = {(float)((zeros % 8) * Constants::SquareSize), (float)((zeros / 8) * Constants::SquareSize)};
+        DrawRectangleV(pos, Vector2{Constants::SquareSize, Constants::SquareSize}, Color{255, 0, 0, 120});
 
         moves ^= (1ULL << zeros);
         zeros = __builtin_ctzll(moves);

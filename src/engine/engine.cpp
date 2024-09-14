@@ -10,20 +10,11 @@ Engine::Engine(const char* FEN)
 void Engine::update(const Vector2& mousePos)
 {
     if (m_isVsBot && !m_board.isWhiteTurn) {
-        printf("Score: %i\n", m_miniMax(3, -std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), true));
-        // printf("Score: %i\n", m_evaluateBoard());
-
-        std::vector<Pieces::Move> moves = m_generateBotMoves();
-        Pieces::Move move = moves[0];
-        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+        printf("Score: %i\n", m_alphaBetaMax(5, -std::numeric_limits<int>::max(), std::numeric_limits<int>::max()));
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(m_bestMove.from)], m_bestMove.from, m_bestMove.to, true);
         m_requiresNewFEN = true;
+        m_bestMove = {0ULL, 0ULL};
 
-        return;
-    }
-
-
-    // Click location is of bounds
-    if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
         return;
     }
 
@@ -34,6 +25,11 @@ void Engine::update(const Vector2& mousePos)
 
     // For player(s)
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        // Click location is of bounds
+        if ((unsigned)mousePos.x >= Constants::ScreenSize || (unsigned)mousePos.y >= Constants::ScreenSize) {
+            return;
+        }
+
         int clickRow_i = (int)(mousePos.x / Constants::SquareSize);
         int clickCol_i = (int)(mousePos.y / Constants::SquareSize);
 
@@ -75,7 +71,7 @@ void Engine::update(const Vector2& mousePos)
         }
 
 
-        // This happens if no piece was clicked (empty square)
+        // If no piece was clicked (empty square)
         if (!pieceWasClicked) {
             m_selectedPiecePos = 0ULL;
             m_selectedPieceType = Pieces::PieceType::None;
@@ -120,46 +116,59 @@ int Engine::m_quiescentSearch(int alpha, int beta)
 }
 
 
-int Engine::m_miniMax(int depth, int alpha, int beta, bool isMaxing)
+int Engine::m_alphaBetaMax(int depth, int alpha, int beta)
 {
     if (depth == 0) return m_evaluateBoard();
 
-    if (isMaxing) {
-        int maxEval = -std::numeric_limits<int>::max();
+    int bestValue = -std::numeric_limits<int>::max();
 
-        for (Pieces::Move move : m_generateBotMoves()) {
-            if (m_board.pieceLookup[__builtin_ctzll(move.to)] == Pieces::PieceType::None) continue;
+    for (Pieces::Move move : m_generateBotMoves()) {
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+        int score = m_alphaBetaMin(depth - 1, alpha, beta);
+        m_board.undoMove();
 
-            m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
-            int score = -m_miniMax(depth - 1, alpha, beta, false);
-            m_board.undoMove();
+        if (score > bestValue) {
+            bestValue = score;
 
-            maxEval = std::max(maxEval, score);
-            alpha = std::max(alpha, score);
+            if (score > alpha) {
+                alpha = score;
 
-            if (beta <= alpha) break;
+                // Set best move if at root node
+                if (depth == 5)
+                    m_bestMove = move;
+            }
         }
 
-        return maxEval;
+        if (score >= beta)
+            return score;
     }
-    else {
-        int minEval = std::numeric_limits<int>::max();
 
-        for (Pieces::Move move : m_generateBotMoves()) {
-            if (m_board.pieceLookup[__builtin_ctzll(move.to)] == Pieces::PieceType::None) continue;
+    return bestValue;
+}
 
-            m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
-            int score = -m_miniMax(depth - 1, alpha, beta, true);
-            m_board.undoMove();
+int Engine::m_alphaBetaMin(int depth, int alpha, int beta)
+{
+    if (depth == 0) return -m_evaluateBoard();
 
-            minEval = std::min(minEval, score);
-            beta = std::min(beta, score);
+    int bestValue = std::numeric_limits<int>::max();
 
-            if (beta <= alpha) break;
+    for (Pieces::Move move : m_generateBotMoves()) {
+        m_board.makeMove(m_board.pieceLookup[__builtin_ctzll(move.from)], move.from, move.to, true);
+        int score = m_alphaBetaMax(depth - 1, alpha, beta);
+        m_board.undoMove();
+
+        if (score < bestValue) {
+            bestValue = score;
+
+            if (score < beta)
+                beta = score;
         }
 
-        return minEval;
+        if (score <= alpha)
+            return score;
     }
+
+    return bestValue;
 }
 
 
